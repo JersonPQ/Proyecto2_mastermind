@@ -1,12 +1,15 @@
 from tkinter import *
+import random
 
 ventana_juego = Tk()
 ventana_juego.title("Mastermind")
 ventana_juego.configure(bg="purple")
 ventana_juego.state("zoomed")
+
 logo = PhotoImage(file="mastermind_copy_(Logo mas pequeno).png")
 start_button = PhotoImage(file="START_button_recortado_(boton).png")
 cancel_button = PhotoImage(file="CANCEL_button_recortado_(boton).png")
+check_button = PhotoImage(file="CALIFICAR_recortado_(boton).png")
 
 cantidad_filas = 8
 cantidad_columnas = 4
@@ -16,7 +19,7 @@ matriz_tabla_calificar = []
 
 started = False
 nombre_jugador = StringVar
-secuencia_a_adivinar = []
+opciones = ["A", "B", "C", "D", "E", "F"]
 opcion_seleccionada = "A"
 opcion1 = "A"
 opcion2 = "B"
@@ -30,27 +33,40 @@ opcion6 = "F"
 
 
 def start():
-    global started
+    global started, opciones, boton_start
 
     if not started:
         started = True
-        print("Juego inicado")
+        secuencia_a_adivinar = random.choices(opciones, k=4)
+        boton_start.configure(image=check_button)
+        print("Juego iniciado")
     else:
         print("Espere que se termine el juego")
 
 
 def cancel():
-    global started
+    global started, boton_start, start_button
 
     if started:
         started = False
+        boton_start.configure(image=start_button)
         print("Juego cancelado")
     else:
         print("Juego no ha sido iniciado")
 
 
-def poner_color(label):
-    print(label)
+def poner_opcion(label):
+    if started:
+        label.configure(text=opcion_seleccionada)
+        print(label)
+
+
+def seleccionar_opcion(label):
+    global opcion_seleccionada
+
+    if started:
+        opcion_seleccionada = label['text']
+        print(label)
 
 
 # ---------------- Frames --------------------- #
@@ -83,8 +99,9 @@ Label(entry_jugador, text="Jugador:", bg="white", font=("Open Sans", 12), padx=5
 
 Entry(entry_jugador, textvariable=nombre_jugador, bg="light gray", borderwidth=0, font=("Open Sans", 12)).grid(row=0,
                                                                                                                column=1)
-Button(start_cancel_buttons, image=start_button, bg="white", borderwidth=0, pady=15, padx=30,
-       command=lambda: start()).grid(row=0, column=0, pady=20)
+boton_start = Button(start_cancel_buttons, image=start_button, bg="white", borderwidth=0, pady=15, padx=30,
+                     command=lambda: start())
+boton_start.grid(row=0, column=0, pady=20)
 Button(start_cancel_buttons, image=cancel_button, bg="white", borderwidth=0, pady=15, padx=30,
        command=lambda: cancel()).grid(row=1, column=0, pady=20)
 
@@ -97,11 +114,12 @@ for i in range(cantidad_filas):
     for j in range(cantidad_columnas):
         label_tablero = Label(tablero, text="O", width=5, height=2)
         label_tablero.grid(row=i, column=j, padx=10, pady=30)
-        label_tablero.bind("<Button-1>", lambda e, btn=label_tablero: poner_color(btn))
+        label_tablero.bind("<Button-1>", lambda e, btn=label_tablero: poner_opcion(btn))
         fila_tablero.append(label_tablero)
 
     matriz_tablero.append(fila_tablero)
 
+# for para craer la tabla de calificación
 for i in range(cantidad_filas):
     fila_calificadora = []
     fila_cuadrito = Frame(tabla_calificadora)
@@ -119,5 +137,10 @@ for i in range(cantidad_filas):
 
     matriz_tabla_calificar.append(fila_calificadora)
 
+# for para crear botones del panel
+for i in range(len(opciones)):
+    label_panel = Label(panel_opciones, text=opciones[i], width=5, height=2)
+    label_panel.grid(row=i, column=0, padx=10, pady=20)
+    label_panel.bind("<Button-1>", lambda e, btn=label_panel: seleccionar_opcion(btn))
 
 ventana_juego.mainloop()
