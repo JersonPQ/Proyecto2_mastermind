@@ -16,40 +16,45 @@ cantidad_columnas = 4
 columnas_tabla_calificar = 2
 matriz_tablero = []
 matriz_tabla_calificar = []
+posicion_fila = 0
 
 started = False
 nombre_jugador = StringVar
 opciones = ["A", "B", "C", "D", "E", "F"]
-opcion_seleccionada = "A"
-opcion1 = "A"
-opcion2 = "B"
-opcion3 = "C"
-opcion4 = "D"
-opcion5 = "E"
-opcion6 = "F"
-
+opcion_seleccionada = opciones[0]
 
 # ---------------- Funciones --------------------- #
 
 
 def start():
-    global started, opciones, boton_start
+    global started, opciones, boton_start, posicion_fila
+
+    posicion_fila = 0
 
     if not started:
         started = True
         secuencia_a_adivinar = random.choices(opciones, k=4)
-        boton_start.configure(image=check_button)
+        boton_start.configure(image=check_button, command=lambda: cambiar_fila(posicion_fila))
+
+        # habilita los cuadritos que están en la fila 0
+        for cuadro in matriz_tablero[posicion_fila]:
+            cuadro.bind("<Button-1>", lambda e, btn=cuadro: poner_opcion(btn))
+
         print("Juego iniciado")
     else:
         print("Espere que se termine el juego")
 
 
-def cancel():
+def cancel(row):
     global started, boton_start, start_button
+
+    # deshabilita los cuadritos de la posicion en la que se estaba en caso de dar cancel
+    for cuadro in matriz_tablero[row]:
+        cuadro.unbind("<Button-1>")
 
     if started:
         started = False
-        boton_start.configure(image=start_button)
+        boton_start.configure(image=start_button, command=lambda: start())
         print("Juego cancelado")
     else:
         print("Juego no ha sido iniciado")
@@ -57,6 +62,7 @@ def cancel():
 
 def poner_opcion(label):
     if started:
+        # da valor al label clickeado
         label.configure(text=opcion_seleccionada)
         print(label)
 
@@ -65,8 +71,37 @@ def seleccionar_opcion(label):
     global opcion_seleccionada
 
     if started:
+        # toma el valor del label clickeado (los del panel)
         opcion_seleccionada = label['text']
         print(label)
+
+
+def cambiar_fila(row):
+    global posicion_fila, started
+
+    # valida de que todos los cuadritos tengan un valor y no estén vacíos
+    for elemento in matriz_tablero[row]:
+        if "" == elemento["text"]:
+            return
+
+        print(row)
+
+    posicion_fila += 1
+
+    # si posicion de fila es == a cantidad de filas se cambia el boton y se "reinicia el conteo de filas"
+    if posicion_fila == cantidad_filas:
+        boton_start.configure(image=start_button, command=lambda: start())
+        started = False
+        return
+
+    # si la fila en la que se está es mayor que 0 y menor o igual que el numero de filas, entonces habilita el poder
+    # dar click como boton, y deshabilita el anterior que estaba habilitado
+    if 0 < posicion_fila <= cantidad_filas:
+        for cuadro in matriz_tablero[posicion_fila - 1]:
+            cuadro.unbind("<Button-1>")
+
+        for cuadro in matriz_tablero[posicion_fila]:
+            cuadro.bind("<Button-1>", lambda e, btn=cuadro: poner_opcion(btn))
 
 
 # ---------------- Frames --------------------- #
@@ -103,7 +138,7 @@ boton_start = Button(start_cancel_buttons, image=start_button, bg="white", borde
                      command=lambda: start())
 boton_start.grid(row=0, column=0, pady=20)
 Button(start_cancel_buttons, image=cancel_button, bg="white", borderwidth=0, pady=15, padx=30,
-       command=lambda: cancel()).grid(row=1, column=0, pady=20)
+       command=lambda: cancel(posicion_fila)).grid(row=1, column=0, pady=20)
 
 # ---------------- Código --------------------- #
 
@@ -112,9 +147,8 @@ for i in range(cantidad_filas):
     fila_tablero = []
 
     for j in range(cantidad_columnas):
-        label_tablero = Label(tablero, text="O", width=5, height=2)
+        label_tablero = Label(tablero, text="", width=5, height=2)
         label_tablero.grid(row=i, column=j, padx=10, pady=30)
-        label_tablero.bind("<Button-1>", lambda e, btn=label_tablero: poner_opcion(btn))
         fila_tablero.append(label_tablero)
 
     matriz_tablero.append(fila_tablero)
