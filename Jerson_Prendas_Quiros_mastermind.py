@@ -36,6 +36,11 @@ def start():
         secuencia_a_adivinar = random.choices(opciones, k=4)
         boton_start.configure(image=check_button, command=lambda: cambiar_fila(posicion_fila))
 
+        # limpia text de los cuadritos en caso de haber terminado un juego y lo vuelve a iniciar
+        for x in range(cantidad_filas):
+            for y in range(cantidad_columnas):
+                matriz_tablero[x][y].configure(text="")
+
         # habilita los cuadritos que están en la fila 0
         for cuadro in matriz_tablero[posicion_fila]:
             cuadro.bind("<Button-1>", lambda e, btn=cuadro: poner_opcion(btn))
@@ -46,7 +51,7 @@ def start():
 
 
 def cancel(row):
-    global started, boton_start, start_button
+    global started, boton_start, start_button, cantidad_filas, matriz_tablero
 
     # deshabilita los cuadritos de la posicion en la que se estaba en caso de dar cancel
     for cuadro in matriz_tablero[row]:
@@ -55,6 +60,12 @@ def cancel(row):
     if started:
         started = False
         boton_start.configure(image=start_button, command=lambda: start())
+
+    # limpia text de los cuadritos en caso de clickear cancel
+    for x in range(cantidad_filas):
+        for y in range(cantidad_columnas):
+            matriz_tablero[x][y].configure(text="")
+
         print("Juego cancelado")
     else:
         print("Juego no ha sido iniciado")
@@ -109,10 +120,10 @@ def cambiar_fila(row):
 botones_izquierda = Frame(ventana_juego, bg="black", height=500)
 botones_izquierda.grid(row=1, rowspan=4, column=0, padx=150, pady=15)
 
-tablero = Frame(ventana_juego, bg="blue", width=400, height=800)
+tablero = Frame(ventana_juego, bg="light gray", width=400, height=800)
 tablero.grid(row=1, rowspan=8, column=3, pady=15)
 
-tabla_calificadora = Frame(ventana_juego, bg="dark gray", width=150, height=800)
+tabla_calificadora = Frame(ventana_juego, bg="light gray", width=150, height=800, padx=5)
 tabla_calificadora.grid(row=1, rowspan=7, column=4, pady=15)
 
 panel_opciones = Frame(ventana_juego, bg="red", width=100, height=500)
@@ -153,17 +164,17 @@ for i in range(cantidad_filas):
 
     matriz_tablero.append(fila_tablero)
 
-# for para craer la tabla de calificación
+# for para crear la tabla de calificación
 for i in range(cantidad_filas):
     fila_calificadora = []
-    fila_cuadrito = Frame(tabla_calificadora)
+    fila_cuadrito = Frame(tabla_calificadora, bg="light gray")
 
     for j in range(columnas_tabla_calificar):
         lista_fila_cuadrito = []
 
         for fila_cal in range(columnas_tabla_calificar):
-            label_calificar = Label(fila_cuadrito, text="O", width=4, height=1)
-            label_calificar.grid(row=j, column=fila_cal, pady=10)
+            label_calificar = Label(fila_cuadrito, text="O", width=2, height=1)
+            label_calificar.grid(row=j, column=fila_cal, pady=10, padx=5)
             lista_fila_cuadrito.append(label_calificar)
 
         fila_cuadrito.grid(row=i, column=j, pady=7)
