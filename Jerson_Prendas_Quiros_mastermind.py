@@ -1,5 +1,6 @@
 from tkinter import *
 import random
+import pickle
 
 ventana_juego = Tk()
 ventana_juego.title("Mastermind")
@@ -17,9 +18,13 @@ columnas_tabla_calificar = 2
 matriz_tablero = []
 matriz_tabla_calificar = []
 posicion_fila = 0
+negros = 0
+blancos = 0
 
 started = False
 nombre_jugador = StringVar
+secuencia_a_adivinar = 0
+partida_guardada = []
 opciones = ["A", "B", "C", "D", "E", "F"]
 opcion_seleccionada = opciones[0]
 
@@ -27,14 +32,17 @@ opcion_seleccionada = opciones[0]
 
 
 def start():
-    global started, opciones, boton_start, posicion_fila
-
-    posicion_fila = 0
+    global started, opciones, boton_start, posicion_fila, secuencia_a_adivinar, negros, blancos
 
     if not started:
         started = True
+        posicion_fila = 0
+        negros = 0
+        blancos = 0
         secuencia_a_adivinar = random.choices(opciones, k=4)
         boton_start.configure(image=check_button, command=lambda: cambiar_fila(posicion_fila))
+
+        print("Secuencia a adivinar: {0}".format(secuencia_a_adivinar))
 
         # limpia text de los cuadritos en caso de haber terminado un juego y lo vuelve a iniciar
         for x in range(cantidad_filas):
@@ -50,25 +58,28 @@ def start():
         print("Espere que se termine el juego")
 
 
-def cancel(row):
-    global started, boton_start, start_button, cantidad_filas, matriz_tablero
-
-    # deshabilita los cuadritos de la posicion en la que se estaba en caso de dar cancel
-    for cuadro in matriz_tablero[row]:
-        cuadro.unbind("<Button-1>")
+def cancel():
+    global started, boton_start, start_button, cantidad_filas, matriz_tablero, negros, blancos
 
     if started:
         started = False
+        negros = 0
+        blancos = 0
         boton_start.configure(image=start_button, command=lambda: start())
+
+        # deshabilita los cuadritos de el tablero
+        for fila in matriz_tablero:
+            for cuadro in fila:
+                cuadro.unbind("<Button-1>")
+
+        print("Juego cancelado")
+    else:
+        print("Juego no ha sido iniciado")
 
     # limpia text de los cuadritos en caso de clickear cancel
     for x in range(cantidad_filas):
         for y in range(cantidad_columnas):
             matriz_tablero[x][y].configure(text="")
-
-        print("Juego cancelado")
-    else:
-        print("Juego no ha sido iniciado")
 
 
 def poner_opcion(label):
@@ -88,7 +99,9 @@ def seleccionar_opcion(label):
 
 
 def cambiar_fila(row):
-    global posicion_fila, started
+    global posicion_fila, started, secuencia_a_adivinar, negros, blancos
+    negros = 0
+    blancos = 0
 
     # valida de que todos los cuadritos tengan un valor y no estén vacíos
     for elemento in matriz_tablero[row]:
@@ -97,12 +110,29 @@ def cambiar_fila(row):
 
         print(row)
 
+    # REVISAAAARRRR
+    for i_elemento_revisar, elemento_revisar in enumerate(matriz_tablero[posicion_fila]):
+        if elemento_revisar["text"] == secuencia_a_adivinar[i_elemento_revisar]:
+            negros += 1
+        elif elemento_revisar["text"] in secuencia_a_adivinar:
+            blancos += 1
+
+    print(f"Cuadritos negros: {negros}")
+    print(f"Cuadritos blancos: {blancos}")
+
+    if negros == 4:
+        print("¡HAS GANADO!")
+        boton_start.configure(image=start_button, command=start)
+        started = False
+        return
+
     posicion_fila += 1
 
     # si posicion de fila es == a cantidad de filas se cambia el boton y se "reinicia el conteo de filas"
     if posicion_fila == cantidad_filas:
         boton_start.configure(image=start_button, command=lambda: start())
         started = False
+        print("No lo has conseguido, A LA PRÓXIMA")
         return
 
     # si la fila en la que se está es mayor que 0 y menor o igual que el numero de filas, entonces habilita el poder
@@ -115,10 +145,68 @@ def cambiar_fila(row):
             cuadro.bind("<Button-1>", lambda e, btn=cuadro: poner_opcion(btn))
 
 
+def save(matriz_partida):
+    global started, posicion_fila, secuencia_a_adivinar
+
+    if started:
+        datos_cuadrito_tablero = []
+
+        for i_matriz in matriz_partida:
+            fila = []
+
+            for j_matriz in i_matriz:
+                fila.append(j_matriz["text"])
+
+            datos_cuadrito_tablero.append(fila)
+
+        archivo_partida = open("partida_guardada.dat", "wb")
+        pickle.dump(datos_cuadrito_tablero, archivo_partida)
+        pickle.dump(posicion_fila, archivo_partida)
+        pickle.dump(secuencia_a_adivinar, archivo_partida)
+        archivo_partida.close()
+
+
+def load(tablero_matriz):
+    global started, posicion_fila, partida_guardada, secuencia_a_adivinar
+    archivo_partida = open("partida_guardada.dat", "rb")
+
+    while True:
+        try:
+            partida_guardada += [pickle.load(archivo_partida)]
+        except EOFError:
+            break
+
+    datos_cuadritos_tablero = partida_guardada[0]
+    posicion_fila = partida_guardada[1]
+    secuencia_a_adivinar = partida_guardada[2]
+
+    print(f"Secuencia a adivinar: {secuencia_a_adivinar}")
+
+    archivo_partida.close()
+
+    if not started:
+        for i_matriz in range(len(tablero_matriz)):
+            for j_matriz in range(len(tablero_matriz[0])):
+                tablero_matriz[i_matriz][j_matriz]["text"] = datos_cuadritos_tablero[i_matriz][j_matriz]
+
+        boton_start.configure(image=check_button, command=lambda: cambiar_fila(posicion_fila))
+
+        for cuadro in matriz_tablero[posicion_fila]:
+            cuadro.bind("<Button-1>", lambda e, btn=cuadro: poner_opcion(btn))
+
+        started = True
+
+
 # ---------------- Frames --------------------- #
 
-botones_izquierda = Frame(ventana_juego, bg="black", height=500)
-botones_izquierda.grid(row=1, rowspan=4, column=0, padx=150, pady=15)
+botones_izquierda = Frame(ventana_juego, bg="black", height=180)
+botones_izquierda.grid(row=1, rowspan=3, column=0, padx=150)
+
+entry_jugador = Frame(botones_izquierda, bg="white")
+entry_jugador.grid(row=1, column=0, pady=15)
+
+start_cancel_buttons = Frame(botones_izquierda, bg="white")
+start_cancel_buttons.grid(row=2, column=0, pady=40)
 
 tablero = Frame(ventana_juego, bg="light gray", width=400, height=800)
 tablero.grid(row=1, rowspan=8, column=3, pady=15)
@@ -129,16 +217,12 @@ tabla_calificadora.grid(row=1, rowspan=7, column=4, pady=15)
 panel_opciones = Frame(ventana_juego, bg="red", width=100, height=500)
 panel_opciones.grid(row=1, rowspan=3, column=5, padx=150, pady=15)
 
-entry_jugador = Frame(botones_izquierda, bg="white")
-entry_jugador.grid(row=1, column=0, pady=40)
-
-start_cancel_buttons = Frame(botones_izquierda, bg="white")
-start_cancel_buttons.grid(row=2, column=0, pady=80)
-
+save_load_buttons = Frame(ventana_juego, bg="orange", width=210, height=175)
+save_load_buttons.grid(row=4, column=5)
 
 # ---------------- Labels --------------------- #
 
-Label(botones_izquierda, image=logo, borderwidth=0, padx=40).grid(row=0, column=0, padx=10, pady=60)
+Label(botones_izquierda, image=logo, borderwidth=0, padx=40).grid(row=0, column=0, padx=10, pady=10)
 Label(entry_jugador, text="Jugador:", bg="white", font=("Open Sans", 12), padx=5).grid(row=0, column=0)
 
 # ---------------- Buttons --------------------- #
@@ -148,8 +232,15 @@ Entry(entry_jugador, textvariable=nombre_jugador, bg="light gray", borderwidth=0
 boton_start = Button(start_cancel_buttons, image=start_button, bg="white", borderwidth=0, pady=15, padx=30,
                      command=lambda: start())
 boton_start.grid(row=0, column=0, pady=20)
+
 Button(start_cancel_buttons, image=cancel_button, bg="white", borderwidth=0, pady=15, padx=30,
-       command=lambda: cancel(posicion_fila)).grid(row=1, column=0, pady=20)
+       command=cancel).grid(row=1, column=0, pady=20)
+
+save_button = Button(save_load_buttons, text="SAVE", bg="red", padx=42, pady=15, command=lambda: save(matriz_tablero))
+save_button.grid(row=0, column=0, padx=10, pady=10)
+
+load_button = Button(save_load_buttons, text="LOAD", bg="red", padx=40, pady=15, command=lambda: load(matriz_tablero))
+load_button.grid(row=1, column=0, padx=10, pady=10)
 
 # ---------------- Código --------------------- #
 
