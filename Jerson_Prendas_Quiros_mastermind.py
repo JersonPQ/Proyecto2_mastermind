@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 import random
 import pickle
 
@@ -6,7 +7,10 @@ import pickle
 def configuracion():
     ventana_configuracion = Toplevel()
     ventana_configuracion.title("Mastermind")
+    ventana_configuracion.geometry("1466x768")
     ventana_configuracion.state("zoomed")
+
+    fondo_configuracion = PhotoImage(file="fondo_configuracion.png")
 
     # -------------------------------------------- Funciones -------------------------------------------- #
 
@@ -21,86 +25,88 @@ def configuracion():
         ventana_configuracion.destroy()
 
     # -------------------------------------------- Frames -------------------------------------------- #
-    dificultad = Frame(ventana_configuracion, bg="black", height=300, width=500)
+    dificultad = Frame(ventana_configuracion, bg="white", height=300, width=500)
     dificultad.place(x=175, y=40)
 
-    radiobuttons_dificultad = Frame(dificultad, bg="yellow", height=150, width=250)
+    radiobuttons_dificultad = Frame(dificultad, bg="white", height=150, width=250)
     radiobuttons_dificultad.place(x=150, y=90)
 
-    reloj = Frame(ventana_configuracion, bg="black", height=300, width=500)
+    reloj = Frame(ventana_configuracion, bg="white", height=300, width=500)
     reloj.place(x=175, y=380)
 
-    radiobuttons_reloj = Frame(reloj, bg="yellow", height=150, width=250)
+    radiobuttons_reloj = Frame(reloj, bg="white", height=150, width=250)
     radiobuttons_reloj.place(x=150, y=90)
 
-    posicion_panel = Frame(ventana_configuracion, bg="black", height=300, width=500)
+    posicion_panel = Frame(ventana_configuracion, bg="white", height=300, width=500)
     posicion_panel.place(x=875, y=40)
 
-    radiobuttons_posicion_panel = Frame(posicion_panel, bg="yellow", height=150, width=250)
+    radiobuttons_posicion_panel = Frame(posicion_panel, bg="white", height=150, width=250)
     radiobuttons_posicion_panel.place(x=150, y=90)
 
-    panel = Frame(ventana_configuracion, bg="black", height=300, width=500)
+    panel = Frame(ventana_configuracion, bg="white", height=300, width=500)
     panel.place(x=875, y=380)
 
-    radiobuttons_panel = Frame(panel, bg="yellow", height=150, width=250)
+    radiobuttons_panel = Frame(panel, bg="white", height=150, width=250)
     radiobuttons_panel.place(x=150, y=90)
 
     # -------------------------------------------- Labels -------------------------------------------- #
-    Label(dificultad, text="Dificultad:", bg="red", font=("Open Sans", 12)).place(x=50, y=50)
+    Label(ventana_configuracion, image=fondo_configuracion, bd=0).pack()
 
-    Label(reloj, text="Reloj:", bg="red", font=("Open Sans", 12)).place(x=50, y=50)
+    Label(ventana_configuracion, text="Dificultad:", bg="white", font=("Open Sans", 12)).place(x=225, y=90)
 
-    Label(posicion_panel, text="Posición del panel:", bg="red", font=("Open Sans", 12)).place(x=50, y=50)
+    Label(ventana_configuracion, text="Reloj:", bg="white", font=("Open Sans", 12)).place(x=225, y=430)
 
-    Label(panel, text="Panel de elementos para utilizar:", bg="red", font=("Open Sans", 12)).place(x=50, y=50)
+    Label(ventana_configuracion, text="Posición del panel:", bg="white", font=("Open Sans", 12)).place(x=925, y=90)
+
+    Label(ventana_configuracion, text="Panel de elementos para utilizar:", bg="white", font=("Open Sans", 12)).place(x=925, y=430)
 
     # -------------------------------------------- Radiobuttons -------------------------------------------- #
-    nivel_facil = Radiobutton(radiobuttons_dificultad, text="Nivel Fácil", font=("Open Sans", 12),
+    nivel_facil = Radiobutton(ventana_configuracion, text="Nivel Fácil", bg="white", font=("Open Sans", 12),
                               variable=seleccion_dificultad, value=1)
-    nivel_facil.place(x=0, y=0)
+    nivel_facil.place(x=325, y=130)
 
-    nivel_medio = Radiobutton(radiobuttons_dificultad, text="Nivel Medio", font=("Open Sans", 12),
+    nivel_medio = Radiobutton(ventana_configuracion, text="Nivel Medio", bg="white", font=("Open Sans", 12),
                               variable=seleccion_dificultad, value=2)
-    nivel_medio.place(x=0, y=40)
+    nivel_medio.place(x=325, y=170)
 
-    nivel_dificil = Radiobutton(radiobuttons_dificultad, text="Nivel Difícil", font=("Open Sans", 12),
+    nivel_dificil = Radiobutton(ventana_configuracion, text="Nivel Difícil", bg="white", font=("Open Sans", 12),
                                 variable=seleccion_dificultad, value=3)
-    nivel_dificil.place(x=0, y=80)
+    nivel_dificil.place(x=325, y=210)
 
-    reloj_si = Radiobutton(radiobuttons_reloj, text="Si", bg="white", font=("Open Sans", 12), variable=seleccion_reloj,
+    reloj_si = Radiobutton(ventana_configuracion, text="Si", bg="white", font=("Open Sans", 12), variable=seleccion_reloj,
                            value=1)
-    reloj_si.place(x=0, y=0)
+    reloj_si.place(x=325, y=470)
 
-    reloj_no = Radiobutton(radiobuttons_reloj, text="No", bg="white", font=("Open Sans", 12), variable=seleccion_reloj,
+    reloj_no = Radiobutton(ventana_configuracion, text="No", bg="white", font=("Open Sans", 12), variable=seleccion_reloj,
                            value=2)
-    reloj_no.place(x=0, y=40)
+    reloj_no.place(x=325, y=510)
 
-    reloj_por_jugada = Radiobutton(radiobuttons_reloj, text="Cronómetro por jugada", bg="white", font=("Open Sans", 12),
+    reloj_por_jugada = Radiobutton(ventana_configuracion, text="Cronómetro por jugada", bg="white", font=("Open Sans", 12),
                                    variable=seleccion_reloj, value=3)
-    reloj_por_jugada.place(x=0, y=80)
+    reloj_por_jugada.place(x=325, y=550)
 
-    reloj_por_juego = Radiobutton(radiobuttons_reloj, text="Cronómetro por juego", bg="white", font=("Open Sans", 12),
+    reloj_por_juego = Radiobutton(ventana_configuracion, text="Cronómetro por juego", bg="white", font=("Open Sans", 12),
                                   variable=seleccion_reloj, value=4)
-    reloj_por_juego.place(x=0, y=120)
+    reloj_por_juego.place(x=325, y=590)
 
-    posicion_panel_derecha = Radiobutton(radiobuttons_posicion_panel, text="Derecha", font=("Open Sans", 12),
+    posicion_panel_derecha = Radiobutton(ventana_configuracion, text="Derecha", bg="white", font=("Open Sans", 12),
                                          variable=seleccion_posicion_panel, value=1)
-    posicion_panel_derecha.place(x=0, y=0)
+    posicion_panel_derecha.place(x=1025, y=130)
 
-    posicion_panel_izquierda = Radiobutton(radiobuttons_posicion_panel, text="Izquierda", font=("Open Sans", 12),
+    posicion_panel_izquierda = Radiobutton(ventana_configuracion, text="Izquierda", bg="white", font=("Open Sans", 12),
                                            variable=seleccion_posicion_panel, value=2)
-    posicion_panel_izquierda.place(x=0, y=40)
+    posicion_panel_izquierda.place(x=1025, y=170)
 
-    panel_colores = Radiobutton(radiobuttons_panel, text="Colores", font=("Open Sans", 12), variable=seleccion_panel,
+    panel_colores = Radiobutton(ventana_configuracion, text="Colores", bg="white", font=("Open Sans", 12), variable=seleccion_panel,
                                 value=1)
-    panel_colores.place(x=0, y=0)
+    panel_colores.place(x=1025, y=470)
 
-    panel_letras = Radiobutton(radiobuttons_panel, text="Letras", font=("Open Sans", 12), variable=seleccion_panel, value=2)
-    panel_letras.place(x=0, y=40)
+    panel_letras = Radiobutton(ventana_configuracion, text="Letras", bg="white", font=("Open Sans", 12), variable=seleccion_panel, value=2)
+    panel_letras.place(x=1025, y=510)
 
-    panel_numeros = Radiobutton(radiobuttons_panel, text="Números", font=("Open Sans", 12), variable=seleccion_panel,
+    panel_numeros = Radiobutton(ventana_configuracion, text="Números", bg="white", font=("Open Sans", 12), variable=seleccion_panel,
                                 value=3)
-    panel_numeros.place(x=0, y=80)
+    panel_numeros.place(x=1025, y=550)
 
     # -------------------------------------------- Buttons -------------------------------------------- #
     Button(ventana_configuracion, image=back_button, borderwidth=0, command=guardar_configuracion).place(x=20, y=20)
@@ -118,6 +124,7 @@ def juego_colores():
 
     ventana_juego = Toplevel()
     ventana_juego.title("Mastermind")
+    ventana_juego.geometry("1466x768")
     ventana_juego.configure(bg="white")
     ventana_juego.state("zoomed")
 
@@ -125,6 +132,8 @@ def juego_colores():
     start_button = PhotoImage(file="START_button_recortado_(boton).png")
     cancel_button = PhotoImage(file="CANCEL_button_recortado_(boton).png")
     check_button = PhotoImage(file="CALIFICAR_recortado_(boton).png")
+    save_button_img = PhotoImage(file="SAVE_recortado_(boton).png")
+    load_button_img = PhotoImage(file="LOAD_recortado_(boton).png")
 
     if seleccion_dificultad.get() == 1:
         cantidad_filas = 8
@@ -194,9 +203,14 @@ def juego_colores():
             print("Espere que se termine el juego")
 
     def cancel():
-        global started, boton_start, start_button, cantidad_filas, matriz_tablero, negros, blancos
+        global started, boton_start, cantidad_filas, matriz_tablero, negros, blancos
 
         if started:
+            confirmacion = messagebox.askquestion("¡Oh oh!", "¿Estás seguro de cancelar la partida?")
+
+            if confirmacion == "no":
+                return
+
             started = False
             negros = 0
             blancos = 0
@@ -326,8 +340,6 @@ def juego_colores():
             pickle.dump(datos_color_calificacion, archivo_partida)
             pickle.dump(nivel, archivo_partida)
             # pickle.dump()  # Guardar el reloj aquí
-            # pickle.dump()  # Guardar la posicion del panel aquí
-            # pickle.dump()  # posicion de los botones de izquierda aquí
             pickle.dump(opciones, archivo_partida)
             pickle.dump(cantidad_filas, archivo_partida)
             pickle.dump(posicion_botones_izquierda, archivo_partida)
@@ -428,9 +440,6 @@ def juego_colores():
 
             started = True
 
-    def volver_menu_principal():
-        ventana_juego.destroy()
-        ventana_principal.deiconify()
 
     # -------------------------------------------- Frames -------------------------------------------- #
 
@@ -445,16 +454,16 @@ def juego_colores():
     start_cancel_buttons = Frame(botones_izquierda, bg="white")
     start_cancel_buttons.grid(row=2, column=0, pady=40)
 
-    tablero_tabla_calificadora = Frame(ventana_juego, bg="light gray")
+    tablero_tabla_calificadora = Frame(ventana_juego, bg="#b93f70")
     tablero_tabla_calificadora.place(x=600, y=15)
 
-    tablero = Frame(tablero_tabla_calificadora, bg="light gray", width=400, height=800)
+    tablero = Frame(tablero_tabla_calificadora, bg="#b93f70", width=400, height=800)
     tablero.grid(row=0, column=0)
 
-    tabla_calificadora = Frame(tablero_tabla_calificadora, bg="light gray", width=150, height=800, padx=5)
+    tabla_calificadora = Frame(tablero_tabla_calificadora, bg="#b93f70", width=150, height=800, padx=5)
     tabla_calificadora.grid(row=0, column=1)
 
-    panel_opciones = Frame(ventana_juego, bg="light gray", width=100, height=500)
+    panel_opciones = Frame(ventana_juego, bg="#121d46", width=100, height=500)
     panel_opciones.place(x=posicion_panel_eje_x, y=15)
 
     save_load_buttons = Frame(ventana_juego, bg="white", width=210, height=175)
@@ -466,7 +475,7 @@ def juego_colores():
 
     Label(botones_izquierda, image=logo, borderwidth=0, padx=40).grid(row=0, column=0, padx=10, pady=10)
     Label(entry_jugador, text="Jugador:", bg="white", font=("Open Sans", 12), padx=5).grid(row=0, column=0)
-    nivel_label = Label(ventana_juego, text=nivel, bg="pink", font=("Open Sans", 12), padx=5, pady=5)
+    nivel_label = Label(ventana_juego, text=nivel, bg="#ec518f", font=("Open Sans", 12), padx=5, pady=5)
     nivel_label.place(x=1300, y=15)
 
     opcion_del_momento_label = Label(ventana_juego, text=opcion_del_momento, bg=opcion_del_momento, font=("Open Sans", 12), padx=5,
@@ -488,15 +497,15 @@ def juego_colores():
     Button(start_cancel_buttons, image=cancel_button, bg="white", borderwidth=0, pady=15, padx=30,
            command=cancel).grid(row=1, column=0, pady=20)
 
-    save_button = Button(save_load_buttons, text="SAVE", bg="red", padx=42, pady=15,
+    save_button = Button(save_load_buttons, image=save_button_img, borderwidth=0, bg="white", padx=42, pady=15,
                          command=lambda: save(matriz_tablero, matriz_tabla_calificar))
     save_button.grid(row=0, column=0, padx=10, pady=10)
 
-    load_button = Button(save_load_buttons, text="LOAD", bg="red", padx=40, pady=15,
+    load_button = Button(save_load_buttons, image=load_button_img, borderwidth=0, bg="white", padx=40, pady=15,
                          command=lambda: load(matriz_tablero, matriz_tabla_calificar))
     load_button.grid(row=1, column=0, padx=10, pady=10)
 
-    Button(ventana_juego, image=back_button, borderwidth=0, command=volver_menu_principal).place(x=20, y=20)
+    Button(ventana_juego, image=back_button, borderwidth=0, command=ventana_juego.destroy).place(x=20, y=20)
 
     # -------------------------------------------- Código -------------------------------------------- #
 
@@ -541,6 +550,7 @@ def juego_letras_numeros():
 
     ventana_juego = Toplevel()
     ventana_juego.title("Mastermind")
+    ventana_juego.geometry("1466x768")
     ventana_juego.configure(bg="white")
     ventana_juego.state("zoomed")
 
@@ -548,6 +558,8 @@ def juego_letras_numeros():
     start_button = PhotoImage(file="START_button_recortado_(boton).png")
     cancel_button = PhotoImage(file="CANCEL_button_recortado_(boton).png")
     check_button = PhotoImage(file="CALIFICAR_recortado_(boton).png")
+    save_button_img = PhotoImage(file="SAVE_recortado_(boton).png")
+    load_button_img = PhotoImage(file="LOAD_recortado_(boton).png")
 
     if seleccion_dificultad.get() == 1:
         cantidad_filas = 8
@@ -621,9 +633,14 @@ def juego_letras_numeros():
             print("Espere que se termine el juego")
 
     def cancel():
-        global started, boton_start, start_button, cantidad_filas, matriz_tablero, negros, blancos
+        global started, boton_start, cantidad_filas, matriz_tablero, negros, blancos
 
         if started:
+            confirmacion = messagebox.askquestion("¡Oh oh!", "¿Estás seguro de cancelar la partida?")
+
+            if confirmacion == "no":
+                return
+                
             started = False
             negros = 0
             blancos = 0
@@ -753,8 +770,6 @@ def juego_letras_numeros():
             pickle.dump(datos_color_calificacion, archivo_partida)
             pickle.dump(nivel, archivo_partida)
             # pickle.dump()  # Guardar el reloj aquí
-            # pickle.dump()  # Guardar la posicion del panel aquí
-            # pickle.dump()  # posicion de los botones de izquierda aquí
             pickle.dump(opciones, archivo_partida)
             pickle.dump(cantidad_filas, archivo_partida)
             pickle.dump(posicion_botones_izquierda, archivo_partida)
@@ -856,10 +871,6 @@ def juego_letras_numeros():
             started = True
 
 
-    def volver_menu_principal():
-        ventana_juego.destroy()
-        ventana_principal.deiconify()
-
     # -------------------------------------------- Frames -------------------------------------------- #
 
     global botones_izquierda, entry_jugador, start_cancel_buttons, tablero_tabla_calificadora, tablero, panel_opciones, tabla_calificadora
@@ -873,16 +884,16 @@ def juego_letras_numeros():
     start_cancel_buttons = Frame(botones_izquierda, bg="white")
     start_cancel_buttons.grid(row=2, column=0, pady=40)
 
-    tablero_tabla_calificadora = Frame(ventana_juego, bg="light gray")
+    tablero_tabla_calificadora = Frame(ventana_juego, bg="#1b2c6c")
     tablero_tabla_calificadora.place(x=600, y=15)
 
-    tablero = Frame(tablero_tabla_calificadora, bg="light gray", width=400, height=800)
+    tablero = Frame(tablero_tabla_calificadora, bg="#1b2c6c", width=400, height=800)
     tablero.grid(row=0, column=0)
 
-    tabla_calificadora = Frame(tablero_tabla_calificadora, bg="light gray", width=150, height=800, padx=5)
+    tabla_calificadora = Frame(tablero_tabla_calificadora, bg="#1b2c6c", width=150, height=800, padx=5)
     tabla_calificadora.grid(row=0, column=1)
 
-    panel_opciones = Frame(ventana_juego, bg="light gray", width=100, height=500)
+    panel_opciones = Frame(ventana_juego, bg="#b93f70", width=100, height=500)
     panel_opciones.place(x=posicion_panel_eje_x, y=15)
 
     save_load_buttons = Frame(ventana_juego, bg="white", width=210, height=175)
@@ -894,10 +905,11 @@ def juego_letras_numeros():
 
     Label(botones_izquierda, image=logo, borderwidth=0, padx=40).grid(row=0, column=0, padx=10, pady=10)
     Label(entry_jugador, text="Jugador:", bg="white", font=("Open Sans", 12), padx=5).grid(row=0, column=0)
-    nivel_label = Label(ventana_juego, text=nivel, bg="pink", font=("Open Sans", 12), padx=5, pady=5)
+
+    nivel_label = Label(ventana_juego, text=nivel, bg="#ec518f", font=("Open Sans", 12), padx=5, pady=5)
     nivel_label.place(x=1300, y=15)
 
-    opcion_del_momento_label = Label(ventana_juego, text=opcion_del_momento, bg="pink", font=("Open Sans", 12), padx=5,
+    opcion_del_momento_label = Label(ventana_juego, text=opcion_del_momento, bg="#ec518f", font=("Open Sans", 12), padx=5,
                                      pady=5)
     opcion_del_momento_label.place(x=1300, y=700)
 
@@ -916,15 +928,15 @@ def juego_letras_numeros():
     Button(start_cancel_buttons, image=cancel_button, bg="white", borderwidth=0, pady=15, padx=30,
            command=cancel).grid(row=1, column=0, pady=20)
 
-    save_button = Button(save_load_buttons, text="SAVE", bg="red", padx=42, pady=15,
+    save_button = Button(save_load_buttons, image=save_button_img, borderwidth=0, bg="white", padx=42, pady=15,
                          command=lambda: save(matriz_tablero, matriz_tabla_calificar))
     save_button.grid(row=0, column=0, padx=10, pady=10)
 
-    load_button = Button(save_load_buttons, text="LOAD", bg="red", padx=40, pady=15,
+    load_button = Button(save_load_buttons, image=load_button_img, borderwidth=0, bg="white", padx=40, pady=15,
                          command=lambda: load(matriz_tablero, matriz_tabla_calificar))
     load_button.grid(row=1, column=0, padx=10, pady=10)
 
-    Button(ventana_juego, image=back_button, borderwidth=0, command=volver_menu_principal).place(x=20, y=20)
+    Button(ventana_juego, image=back_button, borderwidth=0, command=ventana_juego.destroy).place(x=20, y=20)
 
     # -------------------------------------------- Código -------------------------------------------- #
 
@@ -968,9 +980,24 @@ def juego():
 
 ventana_principal = Tk()
 ventana_principal.title("Mastermind")
-boton_juego = Button(ventana_principal, text="Jugar", command=juego)
-boton_juego.place(x=0)
+ventana_principal.geometry("1466x768")
+ventana_principal.state("zoomed")
+
+logo_mastermind = PhotoImage(file="mastermind_copy.png")
+fondo_principal = PhotoImage(file="Fondo_principal.png")
 back_button = PhotoImage(file="VOLVER_(boton).png")
+play_button = PhotoImage(file="PLAY_button_recortado_(boton).png")
+options_button = PhotoImage(file="OPTIONS_button_recortado_(boton).png")
+
+Label(ventana_principal, image=fondo_principal).place(x=0, y=0)
+
+Label(ventana_principal, image=logo_mastermind, borderwidth=0).pack(pady=150)
+
+boton_juego = Button(ventana_principal, image=play_button, borderwidth=0, command=juego)
+boton_juego.pack(pady=0)
+
+boton_configuracion = Button(ventana_principal, image=options_button, borderwidth=0, command=configuracion)
+boton_configuracion.pack(pady=40)
 
 configuracion_guardada = []
 
@@ -1001,8 +1028,5 @@ try:
     seleccion_panel.set(configuracion_guardada[3])
 except FileNotFoundError:
     pass
-
-boton_configuracion = Button(ventana_principal, text="Configuración", command=configuracion)
-boton_configuracion.place(x=0, y=40)
 
 ventana_principal.mainloop()
