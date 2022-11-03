@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 import random
 import pickle
+from datetime import datetime
 
 
 def configuracion():
@@ -24,31 +25,6 @@ def configuracion():
 
         ventana_configuracion.destroy()
 
-    # -------------------------------------------- Frames -------------------------------------------- #
-    dificultad = Frame(ventana_configuracion, bg="white", height=300, width=500)
-    dificultad.place(x=175, y=40)
-
-    radiobuttons_dificultad = Frame(dificultad, bg="white", height=150, width=250)
-    radiobuttons_dificultad.place(x=150, y=90)
-
-    reloj = Frame(ventana_configuracion, bg="white", height=300, width=500)
-    reloj.place(x=175, y=380)
-
-    radiobuttons_reloj = Frame(reloj, bg="white", height=150, width=250)
-    radiobuttons_reloj.place(x=150, y=90)
-
-    posicion_panel = Frame(ventana_configuracion, bg="white", height=300, width=500)
-    posicion_panel.place(x=875, y=40)
-
-    radiobuttons_posicion_panel = Frame(posicion_panel, bg="white", height=150, width=250)
-    radiobuttons_posicion_panel.place(x=150, y=90)
-
-    panel = Frame(ventana_configuracion, bg="white", height=300, width=500)
-    panel.place(x=875, y=380)
-
-    radiobuttons_panel = Frame(panel, bg="white", height=150, width=250)
-    radiobuttons_panel.place(x=150, y=90)
-
     # -------------------------------------------- Labels -------------------------------------------- #
     Label(ventana_configuracion, image=fondo_configuracion, bd=0).pack()
 
@@ -58,7 +34,8 @@ def configuracion():
 
     Label(ventana_configuracion, text="Posición del panel:", bg="white", font=("Open Sans", 12)).place(x=925, y=90)
 
-    Label(ventana_configuracion, text="Panel de elementos para utilizar:", bg="white", font=("Open Sans", 12)).place(x=925, y=430)
+    Label(ventana_configuracion, text="Panel de elementos para utilizar:", bg="white", font=("Open Sans", 12)).place(
+        x=925, y=430)
 
     # -------------------------------------------- Radiobuttons -------------------------------------------- #
     nivel_facil = Radiobutton(ventana_configuracion, text="Nivel Fácil", bg="white", font=("Open Sans", 12),
@@ -73,19 +50,23 @@ def configuracion():
                                 variable=seleccion_dificultad, value=3)
     nivel_dificil.place(x=325, y=210)
 
-    reloj_si = Radiobutton(ventana_configuracion, text="Si", bg="white", font=("Open Sans", 12), variable=seleccion_reloj,
+    reloj_si = Radiobutton(ventana_configuracion, text="Si", bg="white", font=("Open Sans", 12),
+                           variable=seleccion_reloj,
                            value=1)
     reloj_si.place(x=325, y=470)
 
-    reloj_no = Radiobutton(ventana_configuracion, text="No", bg="white", font=("Open Sans", 12), variable=seleccion_reloj,
+    reloj_no = Radiobutton(ventana_configuracion, text="No", bg="white", font=("Open Sans", 12),
+                           variable=seleccion_reloj,
                            value=2)
     reloj_no.place(x=325, y=510)
 
-    reloj_por_jugada = Radiobutton(ventana_configuracion, text="Cronómetro por jugada", bg="white", font=("Open Sans", 12),
+    reloj_por_jugada = Radiobutton(ventana_configuracion, text="Cronómetro por jugada", bg="white",
+                                   font=("Open Sans", 12),
                                    variable=seleccion_reloj, value=3)
     reloj_por_jugada.place(x=325, y=550)
 
-    reloj_por_juego = Radiobutton(ventana_configuracion, text="Cronómetro por juego", bg="white", font=("Open Sans", 12),
+    reloj_por_juego = Radiobutton(ventana_configuracion, text="Cronómetro por juego", bg="white",
+                                  font=("Open Sans", 12),
                                   variable=seleccion_reloj, value=4)
     reloj_por_juego.place(x=325, y=590)
 
@@ -97,14 +78,17 @@ def configuracion():
                                            variable=seleccion_posicion_panel, value=2)
     posicion_panel_izquierda.place(x=1025, y=170)
 
-    panel_colores = Radiobutton(ventana_configuracion, text="Colores", bg="white", font=("Open Sans", 12), variable=seleccion_panel,
+    panel_colores = Radiobutton(ventana_configuracion, text="Colores", bg="white", font=("Open Sans", 12),
+                                variable=seleccion_panel,
                                 value=1)
     panel_colores.place(x=1025, y=470)
 
-    panel_letras = Radiobutton(ventana_configuracion, text="Letras", bg="white", font=("Open Sans", 12), variable=seleccion_panel, value=2)
+    panel_letras = Radiobutton(ventana_configuracion, text="Letras", bg="white", font=("Open Sans", 12),
+                               variable=seleccion_panel, value=2)
     panel_letras.place(x=1025, y=510)
 
-    panel_numeros = Radiobutton(ventana_configuracion, text="Números", bg="white", font=("Open Sans", 12), variable=seleccion_panel,
+    panel_numeros = Radiobutton(ventana_configuracion, text="Números", bg="white", font=("Open Sans", 12),
+                                variable=seleccion_panel,
                                 value=3)
     panel_numeros.place(x=1025, y=550)
 
@@ -121,6 +105,7 @@ def juego_colores():
     global cantidad_filas, cantidad_columnas, matriz_tablero, matriz_tabla_calificar, matriz_tabla_calificar, \
         matriz_tabla_calificar, posicion_fila, negros, blancos, started, nombre_jugador, secuencia_a_adivinar, \
         partida_guardada, opciones, opcion_seleccionada, opcion_del_momento, nivel, posicion_botones_izquierda, posicion_panel_eje_x
+    global horas, minutos, segundos, tiempo_limite
 
     ventana_juego = Toplevel()
     ventana_juego.title("Mastermind")
@@ -145,7 +130,10 @@ def juego_colores():
         cantidad_filas = 6
         nivel = "Nivel: Difícil"
 
-    # if seleccion_reloj == 1:
+    if seleccion_reloj.get() != 2:
+        horas = 0
+        minutos = 0
+        segundos = 0
 
     if seleccion_posicion_panel.get() == 1:
         posicion_botones_izquierda = 150
@@ -163,6 +151,7 @@ def juego_colores():
 
     started = False
     nombre_jugador = StringVar(ventana_juego)
+    tiempo_limite = StringVar(ventana_juego)
     secuencia_a_adivinar = 0
     partida_guardada = []
     opciones = ["sky blue", "orange", "red", "green", "brown", "yellow"]
@@ -172,17 +161,38 @@ def juego_colores():
     # -------------------------------------------- Funciones -------------------------------------------- #
 
     def start():
-        global started, opciones, boton_start, posicion_fila, secuencia_a_adivinar, negros, blancos, entrada_nombre_jugador
+        global started, opciones, boton_start, posicion_fila, secuencia_a_adivinar, negros, blancos, entrada_nombre_jugador, tiempo_inicio, tiempo_limite
+        global corriendo_crono, corriendo_crono_por_jugada, horas_por_jugada, minutos_por_jugada, segundos_por_jugada, tiempos_por_fila
 
-        if not started and not (entrada_nombre_jugador.get() == ""):
+        if not started and 30 >= len(entrada_nombre_jugador.get()) >= 2:
+            if seleccion_reloj.get() != 2:
+                if (seleccion_reloj.get() == 3 or seleccion_reloj.get() == 4) and not ("02:59:59" >= entry_tiempo_limite.get() >= "00:00:02"):
+                    print("Favor primero poner tiempo límite")
+                    return
+
+                started = True
+                corriendo_crono = False
+                # entry_tiempo_limite.config(state="disabled")  #################################### terminar
+                iniciar_crono()
+
+            if seleccion_reloj.get() == 1:
+                horas_por_jugada = 0
+                minutos_por_jugada = 0
+                segundos_por_jugada = 0
+                tiempos_por_fila = []
+                corriendo_crono_por_jugada = False
+                iniciar_crono_por_jugada()
+
             started = True
             posicion_fila = 0
             negros = 0
             blancos = 0
             secuencia_a_adivinar = random.choices(opciones, k=4)
-            boton_start.configure(image=check_button, command=lambda: cambiar_fila(posicion_fila))
 
-            print("Secuencia a adivinar: {0}".format(secuencia_a_adivinar))
+            boton_start.configure(image=check_button, command=lambda: cambiar_fila(posicion_fila))
+            mensaje_limite_tiempo.place_forget()
+            mensaje_perdio_partida.place_forget()
+            mensaje_gano_partida.place_forget()
 
             # limpia text de los cuadritos en caso de haber terminado un juego y lo vuelve a iniciar
             for x in range(cantidad_filas):
@@ -198,9 +208,10 @@ def juego_colores():
                 for cuadrito_calificar in fila_calificar:
                     cuadrito_calificar.config(bg="orange")
 
+            print(f"Secuencia a adivinar: {secuencia_a_adivinar}")
             print("Juego iniciado")
         else:
-            print("Espere que se termine el juego")
+            print("Favor ingrese un nombre entre 2 y 30 caracteres.")
 
     def cancel():
         global started, boton_start, cantidad_filas, matriz_tablero, negros, blancos
@@ -215,6 +226,7 @@ def juego_colores():
             negros = 0
             blancos = 0
             boton_start.configure(image=start_button, command=lambda: start())
+            pausar_reset_crono()
 
             # deshabilita los cuadritos de el tablero
             for fila in matriz_tablero:
@@ -226,14 +238,14 @@ def juego_colores():
                 for cuadrito_calificar in fila_calificar:
                     cuadrito_calificar.config(bg="orange")
 
+            # limpia color de los cuadritos en caso de clickear cancel
+            for x in range(cantidad_filas):
+                for y in range(cantidad_columnas):
+                    matriz_tablero[x][y].configure(bg="#f0f0f0")
+
             print("Juego cancelado")
         else:
             print("Juego no ha sido iniciado")
-
-        # limpia text de los cuadritos en caso de clickear cancel
-        for x in range(cantidad_filas):
-            for y in range(cantidad_columnas):
-                matriz_tablero[x][y].configure(bg="#f0f0f0")
 
     def poner_opcion(label):
         if started:
@@ -252,10 +264,14 @@ def juego_colores():
             print(label)
 
     def cambiar_fila(row):
-        global posicion_fila, started, secuencia_a_adivinar, negros, blancos
+        global posicion_fila, started, secuencia_a_adivinar, negros, blancos, tiempo_partida
+        global horas, minutos, segundos, horas_por_jugada, minutos_por_jugada, segundos_por_jugada
+        global jugadas_nivel_facil, jugadas_nivel_medio, jugadas_nivel_dificil
+
         negros = 0
         blancos = 0
         i_cuadrito_blanco = 0
+
 
         # valida de que todos los cuadritos tengan un valor y no estén vacíos
         for elemento in matriz_tablero[row]:
@@ -264,9 +280,19 @@ def juego_colores():
 
             print(row)
 
+        if seleccion_reloj.get() == 3:
+            horas, minutos, segundos = 0, 0, 0
+            iniciar_crono()
+        elif seleccion_reloj.get() == 1:
+            tiempos_por_fila.append(f"{horas_string_por_jugada}:{minutos_string_por_jugada}:{segundos_string_por_jugada}")
+            horas_por_jugada = 0
+            minutos_por_jugada = 0
+            segundos_por_jugada = 0
+            iniciar_crono_por_jugada()
+            
         # revisa si las letras son iguales a las de la secuencia creada
         for i_elemento_revisar, elemento_revisar in enumerate(matriz_tablero[posicion_fila]):
-            if elemento_revisar["bg"] == secuencia_a_adivinar[i_elemento_revisar]:
+            if elemento_revisar["bg"] == secuencia_a_adivinar[i_elemento_revisar]:  # type: ignore
                 negros += 1
             elif elemento_revisar["bg"] in secuencia_a_adivinar:
                 blancos += 1
@@ -285,9 +311,46 @@ def juego_colores():
         print(f"Cuadritos blancos: {blancos}")
 
         if negros == 4:
-            print("¡HAS GANADO!")
             boton_start.configure(image=start_button, command=start)
             started = False
+            mensaje_gano_partida.place(x=posicion_botones_izquierda + 40, y=650)
+
+            if seleccion_reloj.get() != 2:
+                # toma el tiempo que tardó en terminar la partida
+                tiempo_partida = crono_label["text"]
+                print(f"Tiempo en terminar la partida: {tiempo_partida}")
+
+            if seleccion_reloj.get() == 1:
+                fecha_hora = datetime.now()
+
+                if nivel == "Nivel: Fácil":
+                    jugadas_nivel_facil.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
+                elif nivel == "Nivel: Medio":
+                    jugadas_nivel_medio.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
+                else:
+                    jugadas_nivel_dificil.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
+
+                # ordena las listas de manera descendente
+                jugadas_nivel_facil = sorted(jugadas_nivel_facil, key=lambda datos: datos[1])
+                jugadas_nivel_medio = sorted(jugadas_nivel_medio, key=lambda datos: datos[1])
+                jugadas_nivel_dificil = sorted(jugadas_nivel_dificil, key=lambda datos: datos[1])
+                
+                # de la lista toma solo los 10 primeros
+                jugadas_nivel_facil = jugadas_nivel_facil[:10]
+                jugadas_nivel_medio = jugadas_nivel_medio[:10]
+                jugadas_nivel_dificil = jugadas_nivel_dificil[:10]
+
+                top_10["Facil"] = jugadas_nivel_facil
+                top_10["Medio"] = jugadas_nivel_medio
+                top_10["Dificil"] = jugadas_nivel_dificil
+
+                archivo_top10 = open("mastermind2022top10.dat", "wb")
+                pickle.dump(top_10, archivo_top10)
+                archivo_top10.close()
+
+            pausar_reset_crono()
+            print("¡HAS GANADO!")
+
             return
 
         posicion_fila += 1
@@ -296,6 +359,7 @@ def juego_colores():
         if posicion_fila == cantidad_filas:
             boton_start.configure(image=start_button, command=lambda: start())
             started = False
+            mensaje_perdio_partida.place(x=posicion_botones_izquierda + 30, y=650)
             print("No lo has conseguido, A LA PRÓXIMA")
             return
 
@@ -339,18 +403,43 @@ def juego_colores():
             pickle.dump(entrada_nombre_jugador.get(), archivo_partida)
             pickle.dump(datos_color_calificacion, archivo_partida)
             pickle.dump(nivel, archivo_partida)
-            # pickle.dump()  # Guardar el reloj aquí
             pickle.dump(opciones, archivo_partida)
             pickle.dump(cantidad_filas, archivo_partida)
             pickle.dump(posicion_botones_izquierda, archivo_partida)
             pickle.dump(posicion_panel_eje_x, archivo_partida)
+            pickle.dump(seleccion_reloj.get(), archivo_partida)
+
+            if seleccion_reloj.get() != 2:
+                pickle.dump(horas, archivo_partida)
+                pickle.dump(minutos, archivo_partida)
+                pickle.dump(segundos, archivo_partida)
+
+                if seleccion_reloj.get() in [3, 4]:
+                    pickle.dump(entry_tiempo_limite.get(), archivo_partida)
+                if seleccion_reloj.get() == 1:
+                    pickle.dump(horas_por_jugada, archivo_partida)
+                    pickle.dump(minutos_por_jugada, archivo_partida)
+                    pickle.dump(segundos_por_jugada, archivo_partida)
+                    pickle.dump(tiempos_por_fila, archivo_partida)
+
             archivo_partida.close()
 
-    def load(tablero_matriz, tablero_calificacion):
+    def load():
         global started, posicion_fila, partida_guardada, secuencia_a_adivinar, nombre_jugador, nivel, opciones, label_panel, opcion_seleccionada, opcion_del_momento, opcion_del_momento_label, \
-            fila_calificadora, cantidad_filas, label_calificar, label_tablero, fila_tablero, matriz_tablero, matriz_tabla_calificar, posicion_botones_izquierda, posicion_panel_eje_x
+            fila_calificadora, cantidad_filas, label_calificar, label_tablero, fila_tablero, matriz_tablero, matriz_tabla_calificar, posicion_botones_izquierda, posicion_panel_eje_x, \
+            seleccion_reloj
+        global horas, minutos, segundos, corriendo_crono, tiempos_por_fila, corriendo_crono_por_jugada, horas_por_jugada, minutos_por_jugada, segundos_por_jugada
 
         if not started:
+            # quita los labels de el tablero anterior de el tablero de juego y el tablero de calificacion
+            for fila_label in matriz_tablero:
+                for label in fila_label:
+                    label.grid_forget()
+                    
+            for fila_label_califica in matriz_tabla_calificar:
+                for label_califica in fila_label_califica:
+                    label_califica.grid_forget()
+            
             archivo_partida = open("mastermind2022juegoactual.dat", "rb")
 
             while True:
@@ -365,18 +454,18 @@ def juego_colores():
             nombre_jugador.set(partida_guardada[3])
             datos_colores_tablero = partida_guardada[4]
             nivel = partida_guardada[5]
-            # reloj = partida_guardada[6]
-            # posicion_panel = partida_guardada[6]
-            # posicion_botones_izquierda = partida_guardada[7]
             opciones = partida_guardada[6]
             cantidad_filas = partida_guardada[7]
             posicion_botones_izquierda = partida_guardada[8]
             posicion_panel_eje_x = partida_guardada[9]
-
-            print(f"Secuencia a adivinar: {secuencia_a_adivinar}")
+            seleccion_reloj.set(partida_guardada[10])
+            
+            if seleccion_reloj.get() in [3, 4]:
+                tiempo_limite.set(partida_guardada[14])
 
             archivo_partida.close()
 
+            print(f"Secuencia a adivinar: {secuencia_a_adivinar}")
             # resetea el label de la opcion seleccionada
             opcion_seleccionada = opciones[0]
             opcion_del_momento = opcion_seleccionada
@@ -418,16 +507,17 @@ def juego_colores():
                 matriz_tabla_calificar.append(fila_calificadora)
 
             # cambia los valores del tablero vacío al del tablero guardado
-            for i_matriz in range(len(tablero_matriz)):
-                for j_matriz in range(len(tablero_matriz[0])):
+            for i_matriz in range(cantidad_filas):
+                for j_matriz in range(cantidad_columnas):
                     matriz_tablero[i_matriz][j_matriz]["bg"] = datos_cuadritos_tablero[i_matriz][j_matriz]
 
             boton_start.configure(image=check_button, command=lambda: cambiar_fila(posicion_fila))
 
             # cambia los colores del tablero de calificación al de los colores de los colores
-            for fila_califica in range(len(tablero_calificacion)):
-                for cuadrito in range(len(tablero_calificacion[0])):
-                    matriz_tabla_calificar[fila_califica][cuadrito]["bg"] = datos_colores_tablero[fila_califica][cuadrito]
+            for fila_califica in range(cantidad_columnas):
+                for cuadrito in range(cantidad_columnas):
+                    matriz_tabla_calificar[fila_califica][cuadrito]["bg"] = datos_colores_tablero[fila_califica][
+                        cuadrito]
 
             for cuadro in matriz_tablero[posicion_fila]:
                 cuadro.bind("<Button-1>", lambda e, btn=cuadro: poner_opcion(btn))
@@ -440,6 +530,141 @@ def juego_colores():
 
             started = True
 
+            if seleccion_reloj.get() != 2:
+                horas, minutos, segundos = partida_guardada[11], partida_guardada[12], partida_guardada[13]
+                corriendo_crono = False
+                crono_label.place(x=posicion_botones_izquierda + 90, y=600)
+                iniciar_crono()
+
+            # desaparece los mensajes de limite tiempo en caso de seleccion reloj sea 1 o 2
+            if seleccion_reloj.get() in [1, 2]:
+                tiempo_limite_label.place_forget()
+                entry_tiempo_limite.place_forget()
+                
+                if seleccion_reloj.get() == 1:
+                    horas_por_jugada = partida_guardada[14]
+                    minutos_por_jugada = partida_guardada[15]
+                    segundos_por_jugada = partida_guardada[16]
+                    tiempos_por_fila = partida_guardada[17]
+                    corriendo_crono_por_jugada = False
+                    iniciar_crono_por_jugada()
+                    
+                if seleccion_reloj.get() == 2:
+                    crono_label.place_forget()
+                    
+            # reposiciona label de tiempo limite y el entryde tiempo limite
+            elif seleccion_reloj.get() in [3,4]:
+                if seleccion_reloj.get() == 3:
+                    var_jugada_o_juego = "jugada"
+                else:
+                    var_jugada_o_juego = "juego"
+                
+                tiempo_limite_label.config(text=f"Ingrese tiempo límite por {var_jugada_o_juego} \nen formato 00:00:00:")
+                tiempo_limite_label.place(x=posicion_botones_izquierda + 30, y=460)
+                entry_tiempo_limite.place(x=posicion_botones_izquierda + 60, y=505)
+
+    # funciones para cronómetro en caso de elegir configuración si, por jugada o por juego
+    def iniciar_crono():
+        global corriendo_crono
+
+        if not corriendo_crono:
+            actualizar_crono()
+            corriendo_crono = True
+
+    def actualizar_crono():
+        global horas, minutos, segundos, actualiza_tiempo, started
+
+        segundos += 1
+
+        if segundos == 60:
+            minutos += 1
+            segundos = 0
+
+        if minutos == 60:
+            horas += 1
+            minutos = 0
+
+        horas_string = f"0{horas}"
+        minutos_string = f"{minutos}" if minutos > 9 else f"0{minutos}"
+        segundos_string = f"{segundos}" if segundos > 9 else f"0{segundos}"
+        crono_label.config(text=horas_string + ":" + minutos_string + ":" + segundos_string)
+
+        if seleccion_reloj.get() in [3, 4] and entry_tiempo_limite.get() == crono_label["text"]:
+            mensaje_limite_tiempo.place(x=posicion_botones_izquierda + 40, y=650)
+            started = False
+            boton_start.configure(image=start_button, command=lambda: start())
+            pausar_reset_crono()
+
+            # deshabilita los cuadritos de el tablero
+            for fila in matriz_tablero:
+                for cuadro in fila:
+                    cuadro.unbind("<Button-1>")
+
+            # resetea los cuadritos de calificar
+            for fila_calificar in matriz_tabla_calificar:
+                for cuadrito_calificar in fila_calificar:
+                    cuadrito_calificar.config(bg="orange")
+
+            # limpia color de los cuadritos en caso de clickear cancel
+            for x in range(cantidad_filas):
+                for y in range(cantidad_columnas):
+                    matriz_tablero[x][y].configure(bg="#f0f0f0")
+
+            return
+
+        actualiza_tiempo = ventana_juego.after(1000, actualizar_crono)
+
+    def pausar_reset_crono():
+        global corriendo_crono, horas, minutos, segundos
+
+        if corriendo_crono:
+            # cancelar la funcion de actualizar crono usando after_cancel()
+            crono_label.after_cancel(actualiza_tiempo)
+            corriendo_crono = False
+
+        horas, minutos, segundos = 0, 0, 0
+        crono_label.config(text="00:00:00")
+
+    # funciones de cronómetro para medir el tiempo por jugada en caso de poner reloj en "SI"
+    def iniciar_crono_por_jugada():
+        global corriendo_crono_por_jugada
+
+        if not corriendo_crono_por_jugada:
+            actualizar_crono_por_jugada()
+            corriendo_crono_por_jugada = True
+
+    def actualizar_crono_por_jugada():
+        global horas_por_jugada, minutos_por_jugada, segundos_por_jugada, actualiza_tiempo_por_jugada, started, horas_string_por_jugada, minutos_string_por_jugada, segundos_string_por_jugada
+
+        segundos_por_jugada += 1
+
+        if segundos_por_jugada == 60:
+            minutos_por_jugada += 1
+            segundos_por_jugada = 0
+
+        if minutos_por_jugada == 60:
+            horas_por_jugada += 1
+            minutos_por_jugada = 0
+
+        horas_string_por_jugada = f"0{horas_por_jugada}"
+        minutos_string_por_jugada = f"{minutos_por_jugada}" if minutos_por_jugada > 9 else f"0{minutos_por_jugada}"
+        segundos_string_por_jugada = f"{segundos_por_jugada}" if segundos_por_jugada > 9 else f"0{segundos_por_jugada}"
+
+        if not started:
+            pausar_reset_crono_por_jugada()
+            return
+
+        ventana_juego.after(1000, actualizar_crono_por_jugada)
+
+    def pausar_reset_crono_por_jugada():
+        global corriendo_crono_por_jugada, horas_por_jugada, minutos_por_jugada, segundos_por_jugada
+
+        if corriendo_crono_por_jugada:
+            # cancelar la funcion de actualizar crono usando after_cancel()
+            ventana_juego.after_cancel(actualiza_tiempo)
+            corriendo_crono_por_jugada = False
+
+        horas_por_jugada, minutos_por_jugada, segundos_por_jugada = 0, 0, 0
 
     # -------------------------------------------- Frames -------------------------------------------- #
 
@@ -478,9 +703,21 @@ def juego_colores():
     nivel_label = Label(ventana_juego, text=nivel, bg="#ec518f", font=("Open Sans", 12), padx=5, pady=5)
     nivel_label.place(x=1300, y=15)
 
-    opcion_del_momento_label = Label(ventana_juego, text=opcion_del_momento, bg=opcion_del_momento, font=("Open Sans", 12), padx=5,
-                                     pady=5)
+    opcion_del_momento_label = Label(ventana_juego, text=opcion_del_momento, bg=opcion_del_momento,
+                                     font=("Open Sans", 12), padx=5, pady=5)
     opcion_del_momento_label.place(x=1300, y=700)
+
+    mensaje_gano_partida = Label(ventana_juego, text="¡FELICIDADES, GANASTE!", font=("Open Sans", 14), bg="light green")
+
+    mensaje_perdio_partida = Label(ventana_juego, text="¡UPS! No lo has conseguido en esta \n¡A la próxima!",
+                                   font=("Open Sans", 12), bg="#f25363")
+
+    mensaje_limite_tiempo = Label(ventana_juego, text="¡Oh oh!\n ¡Te has quedado sin tiempo!", font=("Open Sans", 12),
+                                  bg="#f25363")
+
+    entry_tiempo_limite = Entry(ventana_juego, font=("Open Sans", 13), borderwidth=0, justify="center", bg="pink", textvariable=tiempo_limite)
+
+    crono_label = Label(ventana_juego, bg="yellow", text="00:00:00", font=("Open Sans", 20))
 
     # -------------------------------------------- Buttons -------------------------------------------- #
 
@@ -502,12 +739,29 @@ def juego_colores():
     save_button.grid(row=0, column=0, padx=10, pady=10)
 
     load_button = Button(save_load_buttons, image=load_button_img, borderwidth=0, bg="white", padx=40, pady=15,
-                         command=lambda: load(matriz_tablero, matriz_tabla_calificar))
+                         command=load)
     load_button.grid(row=1, column=0, padx=10, pady=10)
 
     Button(ventana_juego, image=back_button, borderwidth=0, command=ventana_juego.destroy).place(x=20, y=20)
 
     # -------------------------------------------- Código -------------------------------------------- #
+
+    if seleccion_reloj.get() == 3:
+        var_jugada_o_juego = "jugada"
+
+    else:
+        var_jugada_o_juego = "juego"
+
+    tiempo_limite_label = Label(ventana_juego, bg="white",
+            text=f"Ingrese tiempo límite por {var_jugada_o_juego} \nen formato 00:00:00:",
+            font=("Open Sans", 13))
+
+    if seleccion_reloj.get() != 2:
+        if seleccion_reloj.get() != 1:
+            tiempo_limite_label.place(x=posicion_botones_izquierda + 30, y=460)
+            entry_tiempo_limite.place(x=posicion_botones_izquierda + 60, y=505)
+
+        crono_label.place(x=posicion_botones_izquierda + 90, y=600)
 
     # for para crear cuadro de los botones de los colores
     for i in range(cantidad_filas):
@@ -547,6 +801,7 @@ def juego_letras_numeros():
     global cantidad_filas, cantidad_columnas, matriz_tablero, matriz_tabla_calificar, matriz_tabla_calificar, \
         matriz_tabla_calificar, posicion_fila, negros, blancos, started, nombre_jugador, secuencia_a_adivinar, \
         partida_guardada, opciones, opcion_seleccionada, opcion_del_momento, nivel, posicion_botones_izquierda, posicion_panel_eje_x
+    global horas, minutos, segundos, tiempo_limite
 
     ventana_juego = Toplevel()
     ventana_juego.title("Mastermind")
@@ -571,7 +826,10 @@ def juego_letras_numeros():
         cantidad_filas = 6
         nivel = "Nivel: Difícil"
 
-    # if seleccion_reloj == 1:
+    if seleccion_reloj.get() != 2:
+        horas = 0
+        minutos = 0
+        segundos = 0
 
     if seleccion_posicion_panel.get() == 1:
         posicion_botones_izquierda = 150
@@ -594,6 +852,7 @@ def juego_letras_numeros():
 
     started = False
     nombre_jugador = StringVar(ventana_juego)
+    tiempo_limite = StringVar(ventana_juego)
     secuencia_a_adivinar = 0
     partida_guardada = []
     opcion_seleccionada = opciones[0]
@@ -603,16 +862,37 @@ def juego_letras_numeros():
 
     def start():
         global started, opciones, boton_start, posicion_fila, secuencia_a_adivinar, negros, blancos, entrada_nombre_jugador
+        global corriendo_crono, corriendo_crono_por_jugada, horas_por_jugada, minutos_por_jugada, segundos_por_jugada, tiempos_por_fila
 
-        if not started and not (entrada_nombre_jugador.get() == ""):
+        if not started and 30 >= len(entrada_nombre_jugador.get()) >= 2:
+            if seleccion_reloj.get() != 2:
+                if (seleccion_reloj.get() == 3 or seleccion_reloj.get() == 4) and not ("02:59:59" >= entry_tiempo_limite.get() >= "00:00:02"):
+                    print("Favor primero poner tiempo límite")
+                    return
+
+                started = True
+                corriendo_crono = False
+                # entry_tiempo_limite.config(state="disabled")  #################################### terminar
+                iniciar_crono()
+
+            if seleccion_reloj.get() == 1:
+                horas_por_jugada = 0
+                minutos_por_jugada = 0
+                segundos_por_jugada = 0
+                tiempos_por_fila = []
+                corriendo_crono_por_jugada = False
+                iniciar_crono_por_jugada()
+
             started = True
             posicion_fila = 0
             negros = 0
             blancos = 0
             secuencia_a_adivinar = random.choices(opciones, k=4)
-            boton_start.configure(image=check_button, command=lambda: cambiar_fila(posicion_fila))
 
-            print("Secuencia a adivinar: {0}".format(secuencia_a_adivinar))
+            boton_start.configure(image=check_button, command=lambda: cambiar_fila(posicion_fila))
+            mensaje_limite_tiempo.place_forget()
+            mensaje_perdio_partida.place_forget()
+            mensaje_gano_partida.place_forget()
 
             # limpia text de los cuadritos en caso de haber terminado un juego y lo vuelve a iniciar
             for x in range(cantidad_filas):
@@ -628,9 +908,11 @@ def juego_letras_numeros():
                 for cuadrito_calificar in fila_calificar:
                     cuadrito_calificar.config(bg="orange")
 
+            print(f"Secuencia a adivinar: {secuencia_a_adivinar}")
             print("Juego iniciado")
         else:
-            print("Espere que se termine el juego")
+            print("Favor ingrese un nombre entre 2 y 30 caracteres.")
+
 
     def cancel():
         global started, boton_start, cantidad_filas, matriz_tablero, negros, blancos
@@ -640,11 +922,12 @@ def juego_letras_numeros():
 
             if confirmacion == "no":
                 return
-                
+
             started = False
             negros = 0
             blancos = 0
             boton_start.configure(image=start_button, command=lambda: start())
+            pausar_reset_crono()
 
             # deshabilita los cuadritos de el tablero
             for fila in matriz_tablero:
@@ -656,14 +939,14 @@ def juego_letras_numeros():
                 for cuadrito_calificar in fila_calificar:
                     cuadrito_calificar.config(bg="orange")
 
+            # limpia text de los cuadritos en caso de clickear cancel
+            for x in range(cantidad_filas):
+                for y in range(cantidad_columnas):
+                    matriz_tablero[x][y].configure(text="")
+
             print("Juego cancelado")
         else:
             print("Juego no ha sido iniciado")
-
-        # limpia text de los cuadritos en caso de clickear cancel
-        for x in range(cantidad_filas):
-            for y in range(cantidad_columnas):
-                matriz_tablero[x][y].configure(text="")
 
     def poner_opcion(label):
         if started:
@@ -682,10 +965,15 @@ def juego_letras_numeros():
             print(label)
 
     def cambiar_fila(row):
-        global posicion_fila, started, secuencia_a_adivinar, negros, blancos
+        global posicion_fila, started, secuencia_a_adivinar, negros, blancos, tiempo_partida
+        global horas, minutos, segundos, horas_por_jugada, minutos_por_jugada, segundos_por_jugada
+        global jugadas_nivel_facil, jugadas_nivel_medio, jugadas_nivel_dificil
+
         negros = 0
         blancos = 0
         i_cuadrito_blanco = 0
+
+
 
         # valida de que todos los cuadritos tengan un valor y no estén vacíos
         for elemento in matriz_tablero[row]:
@@ -694,9 +982,19 @@ def juego_letras_numeros():
 
             print(row)
 
+        if seleccion_reloj.get() == 3:
+            horas, minutos, segundos = 0, 0, 0
+            iniciar_crono()
+        elif seleccion_reloj.get() == 1:
+            tiempos_por_fila.append(f"{horas_string_por_jugada}:{minutos_string_por_jugada}:{segundos_string_por_jugada}")
+            horas_por_jugada = 0
+            minutos_por_jugada = 0
+            segundos_por_jugada = 0
+            iniciar_crono_por_jugada()
+            
         # revisa si las letras son iguales a las de la secuencia creada
         for i_elemento_revisar, elemento_revisar in enumerate(matriz_tablero[posicion_fila]):
-            if elemento_revisar["text"] == secuencia_a_adivinar[i_elemento_revisar]:
+            if elemento_revisar["text"] == secuencia_a_adivinar[i_elemento_revisar]:  # type: ignore
                 negros += 1
             elif elemento_revisar["text"] in secuencia_a_adivinar:
                 blancos += 1
@@ -715,9 +1013,46 @@ def juego_letras_numeros():
         print(f"Cuadritos blancos: {blancos}")
 
         if negros == 4:
-            print("¡HAS GANADO!")
             boton_start.configure(image=start_button, command=start)
             started = False
+            mensaje_gano_partida.place(x=posicion_botones_izquierda + 40, y=650)
+
+            if seleccion_reloj.get() != 2:
+                # toma el tiempo que tardó en terminar la partida
+                tiempo_partida = crono_label["text"]
+                print(f"Tiempo en terminar la partida: {tiempo_partida}")
+
+            if seleccion_reloj.get() == 1:
+                fecha_hora = datetime.now()
+
+                if nivel == "Nivel: Fácil":
+                    jugadas_nivel_facil.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
+                elif nivel == "Nivel: Medio":
+                    jugadas_nivel_medio.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
+                else:
+                    jugadas_nivel_dificil.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
+
+                # ordena las listas de manera descendente
+                jugadas_nivel_facil = sorted(jugadas_nivel_facil, key=lambda datos: datos[1])
+                jugadas_nivel_medio = sorted(jugadas_nivel_medio, key=lambda datos: datos[1])
+                jugadas_nivel_dificil = sorted(jugadas_nivel_dificil, key=lambda datos: datos[1])
+                
+                # de la lista toma solo los 10 primeros
+                jugadas_nivel_facil = jugadas_nivel_facil[:10]
+                jugadas_nivel_medio = jugadas_nivel_medio[:10]
+                jugadas_nivel_dificil = jugadas_nivel_dificil[:10]
+
+                top_10["Facil"] = jugadas_nivel_facil
+                top_10["Medio"] = jugadas_nivel_medio
+                top_10["Dificil"] = jugadas_nivel_dificil
+
+                archivo_top10 = open("mastermind2022top10.dat", "wb")
+                pickle.dump(top_10, archivo_top10)
+                archivo_top10.close()
+
+            pausar_reset_crono()
+            print("¡HAS GANADO!")
+
             return
 
         posicion_fila += 1
@@ -726,6 +1061,7 @@ def juego_letras_numeros():
         if posicion_fila == cantidad_filas:
             boton_start.configure(image=start_button, command=lambda: start())
             started = False
+            mensaje_perdio_partida.place(x=posicion_botones_izquierda + 30, y=650)
             print("No lo has conseguido, A LA PRÓXIMA")
             return
 
@@ -769,18 +1105,44 @@ def juego_letras_numeros():
             pickle.dump(entrada_nombre_jugador.get(), archivo_partida)
             pickle.dump(datos_color_calificacion, archivo_partida)
             pickle.dump(nivel, archivo_partida)
-            # pickle.dump()  # Guardar el reloj aquí
             pickle.dump(opciones, archivo_partida)
             pickle.dump(cantidad_filas, archivo_partida)
             pickle.dump(posicion_botones_izquierda, archivo_partida)
             pickle.dump(posicion_panel_eje_x, archivo_partida)
+            pickle.dump(seleccion_reloj.get(), archivo_partida)
+
+            if seleccion_reloj.get() != 2:
+                pickle.dump(horas, archivo_partida)
+                pickle.dump(minutos, archivo_partida)
+                pickle.dump(segundos, archivo_partida)
+
+                if seleccion_reloj.get() == 1:
+                    pickle.dump(horas_por_jugada, archivo_partida)
+                    pickle.dump(minutos_por_jugada, archivo_partida)
+                    pickle.dump(segundos_por_jugada, archivo_partida)
+                    pickle.dump(tiempos_por_fila, archivo_partida)
+
+                if seleccion_reloj.get() in [3, 4]:
+                    pickle.dump(entry_tiempo_limite.get(), archivo_partida)
+
             archivo_partida.close()
 
-    def load(tablero_matriz, tablero_calificacion):
+    def load():
         global started, posicion_fila, partida_guardada, secuencia_a_adivinar, nombre_jugador, nivel, opciones, label_panel, opcion_seleccionada, opcion_del_momento, opcion_del_momento_label, \
-            fila_calificadora, cantidad_filas, label_calificar, label_tablero, fila_tablero, matriz_tablero, matriz_tabla_calificar, posicion_botones_izquierda, posicion_panel_eje_x
+            fila_calificadora, cantidad_filas, label_calificar, label_tablero, fila_tablero, matriz_tablero, matriz_tabla_calificar, posicion_botones_izquierda, posicion_panel_eje_x, \
+            seleccion_reloj
+        global horas, minutos, segundos, corriendo_crono, tiempos_por_fila, corriendo_crono_por_jugada, horas_por_jugada, minutos_por_jugada, segundos_por_jugada
 
         if not started:
+            # elimina los labels de la tabla anterior, de la tabla y de la tabla de calificacion
+            for fila_label in matriz_tablero:
+                for label in fila_label:
+                    label.grid_forget()
+                    
+            for fila_label_califica in matriz_tabla_calificar:
+                for label_califica in fila_label_califica:
+                    label_califica.grid_forget()
+            
             archivo_partida = open("mastermind2022juegoactual.dat", "rb")
 
             while True:
@@ -795,18 +1157,18 @@ def juego_letras_numeros():
             nombre_jugador.set(partida_guardada[3])
             datos_colores_tablero = partida_guardada[4]
             nivel = partida_guardada[5]
-            # reloj = partida_guardada[6]
-            # posicion_panel = partida_guardada[6]
-            # posicion_botones_izquierda = partida_guardada[7]
             opciones = partida_guardada[6]
             cantidad_filas = partida_guardada[7]
             posicion_botones_izquierda = partida_guardada[8]
             posicion_panel_eje_x = partida_guardada[9]
-
-            print(f"Secuencia a adivinar: {secuencia_a_adivinar}")
-
+            seleccion_reloj.set(partida_guardada[10])
+            
+            if seleccion_reloj.get() in [3,4]:
+                tiempo_limite.set(partida_guardada[14])
+                
             archivo_partida.close()
 
+            print(f"Secuencia a adivinar: {secuencia_a_adivinar}")
             # resetea el label de la opcion seleccionada
             opcion_seleccionada = opciones[0]
             opcion_del_momento = f"Opción seleccionada: {opcion_seleccionada}"
@@ -848,16 +1210,17 @@ def juego_letras_numeros():
                 matriz_tabla_calificar.append(fila_calificadora)
 
             # cambia los valores del tablero vacío al del tablero guardado
-            for i_matriz in range(len(tablero_matriz)):
-                for j_matriz in range(len(tablero_matriz[0])):
+            for i_matriz in range(cantidad_filas):
+                for j_matriz in range(cantidad_columnas):
                     matriz_tablero[i_matriz][j_matriz]["text"] = datos_cuadritos_tablero[i_matriz][j_matriz]
 
             boton_start.configure(image=check_button, command=lambda: cambiar_fila(posicion_fila))
 
             # cambia los colores del tablero de calificación al de los colores de los colores
-            for fila_califica in range(len(tablero_calificacion)):
-                for cuadrito in range(len(tablero_calificacion[0])):
-                    matriz_tabla_calificar[fila_califica][cuadrito]["bg"] = datos_colores_tablero[fila_califica][cuadrito]
+            for fila_califica in range(len(matriz_tablero)):
+                for cuadrito in range(len(matriz_tablero[0])):
+                    matriz_tabla_calificar[fila_califica][cuadrito]["bg"] = datos_colores_tablero[fila_califica][
+                        cuadrito]
 
             for cuadro in matriz_tablero[posicion_fila]:
                 cuadro.bind("<Button-1>", lambda e, btn=cuadro: poner_opcion(btn))
@@ -870,6 +1233,141 @@ def juego_letras_numeros():
 
             started = True
 
+            if seleccion_reloj.get() != 2:
+                horas, minutos, segundos = partida_guardada[11], partida_guardada[12], partida_guardada[13]
+                corriendo_crono = False
+                crono_label.place(x=posicion_botones_izquierda + 90, y=600)
+                iniciar_crono()
+
+            # desaparece los mensajes de limite tiempo en caso de seleccion reloj sea 1 o 2
+            if seleccion_reloj.get() in [1, 2]:
+                tiempo_limite_label.place_forget()
+                entry_tiempo_limite.place_forget()
+                
+                if seleccion_reloj.get() == 1:
+                    horas_por_jugada = partida_guardada[14]
+                    minutos_por_jugada = partida_guardada[15]
+                    segundos_por_jugada = partida_guardada[16]
+                    tiempos_por_fila = partida_guardada[17]
+                    corriendo_crono_por_jugada = False
+                    iniciar_crono_por_jugada()
+                    
+                if seleccion_reloj.get() == 2:
+                    crono_label.place_forget()
+            
+            # reposiciona label de tiempo limite y el entryde tiempo limite
+            elif seleccion_reloj.get() in [3,4]:
+                if seleccion_reloj.get() == 3:
+                    var_jugada_o_juego = "jugada"
+                else:
+                    var_jugada_o_juego = "juego"
+                
+                tiempo_limite_label.config(text=f"Ingrese tiempo límite por {var_jugada_o_juego} \nen formato 00:00:00:")
+                tiempo_limite_label.place(x=posicion_botones_izquierda + 30, y=460)
+                entry_tiempo_limite.place(x=posicion_botones_izquierda + 60, y=505)
+
+    # funciones para cronómetro en caso de elegir configuración si, por jugada o por juego
+    def iniciar_crono():
+        global corriendo_crono
+
+        if not corriendo_crono:
+            actualizar_crono()
+            corriendo_crono = True
+
+    def actualizar_crono():
+        global horas, minutos, segundos, actualiza_tiempo, started
+
+        segundos += 1
+
+        if segundos == 60:
+            minutos += 1
+            segundos = 0
+
+        if minutos == 60:
+            horas += 1
+            minutos = 0
+
+        horas_string = f"0{horas}"
+        minutos_string = f"{minutos}" if minutos > 9 else f"0{minutos}"
+        segundos_string = f"{segundos}" if segundos > 9 else f"0{segundos}"
+        crono_label.config(text=horas_string + ":" + minutos_string + ":" + segundos_string)
+
+        if seleccion_reloj.get() in [3, 4] and entry_tiempo_limite.get() == crono_label["text"]:
+            mensaje_limite_tiempo.place(x=posicion_botones_izquierda + 40, y=650)
+            started = False
+            boton_start.configure(image=start_button, command=lambda: start())
+            pausar_reset_crono()
+
+            # deshabilita los cuadritos de el tablero
+            for fila in matriz_tablero:
+                for cuadro in fila:
+                    cuadro.unbind("<Button-1>")
+
+            # resetea los cuadritos de calificar
+            for fila_calificar in matriz_tabla_calificar:
+                for cuadrito_calificar in fila_calificar:
+                    cuadrito_calificar.config(bg="orange")
+
+            # limpia texto de los cuadritos en caso de clickear cancel
+            for x in range(cantidad_filas):
+                for y in range(cantidad_columnas):
+                    matriz_tablero[x][y].configure(text="")
+
+            return
+
+        actualiza_tiempo = ventana_juego.after(1000, actualizar_crono)
+
+    def pausar_reset_crono():
+        global corriendo_crono, horas, minutos, segundos
+
+        if corriendo_crono:
+            # cancelar la funcion de actualizar crono usando after_cancel()
+            crono_label.after_cancel(actualiza_tiempo)
+            corriendo_crono = False
+
+        horas, minutos, segundos = 0, 0, 0
+        crono_label.config(text="00:00:00")
+
+    # funciones de cronómetro para medir el tiempo por jugada en caso de poner reloj en "SI"
+    def iniciar_crono_por_jugada():
+        global corriendo_crono_por_jugada
+
+        if not corriendo_crono_por_jugada:
+            actualizar_crono_por_jugada()
+            corriendo_crono_por_jugada = True
+
+    def actualizar_crono_por_jugada():
+        global horas_por_jugada, minutos_por_jugada, segundos_por_jugada, actualiza_tiempo_por_jugada, started, horas_string_por_jugada, minutos_string_por_jugada, segundos_string_por_jugada
+
+        segundos_por_jugada += 1
+
+        if segundos_por_jugada == 60:
+            minutos_por_jugada += 1
+            segundos_por_jugada = 0
+
+        if minutos_por_jugada == 60:
+            horas_por_jugada += 1
+            minutos_por_jugada = 0
+
+        horas_string_por_jugada = f"0{horas_por_jugada}"
+        minutos_string_por_jugada = f"{minutos_por_jugada}" if minutos_por_jugada > 9 else f"0{minutos_por_jugada}"
+        segundos_string_por_jugada = f"{segundos_por_jugada}" if segundos_por_jugada > 9 else f"0{segundos_por_jugada}"
+
+        if not started:
+            pausar_reset_crono_por_jugada()
+            return
+
+        ventana_juego.after(1000, actualizar_crono_por_jugada)
+
+    def pausar_reset_crono_por_jugada():
+        global corriendo_crono_por_jugada, horas_por_jugada, minutos_por_jugada, segundos_por_jugada
+
+        if corriendo_crono_por_jugada:
+            # cancelar la funcion de actualizar crono usando after_cancel()
+            ventana_juego.after_cancel(actualiza_tiempo)
+            corriendo_crono_por_jugada = False
+
+        horas_por_jugada, minutos_por_jugada, segundos_por_jugada = 0, 0, 0
 
     # -------------------------------------------- Frames -------------------------------------------- #
 
@@ -909,9 +1407,21 @@ def juego_letras_numeros():
     nivel_label = Label(ventana_juego, text=nivel, bg="#ec518f", font=("Open Sans", 12), padx=5, pady=5)
     nivel_label.place(x=1300, y=15)
 
-    opcion_del_momento_label = Label(ventana_juego, text=opcion_del_momento, bg="#ec518f", font=("Open Sans", 12), padx=5,
-                                     pady=5)
+    opcion_del_momento_label = Label(ventana_juego, text=opcion_del_momento, bg="#ec518f", font=("Open Sans", 12),
+                                     padx=5, pady=5)
     opcion_del_momento_label.place(x=1300, y=700)
+
+    mensaje_gano_partida = Label(ventana_juego, text="¡FELICIDADES, GANASTE!", font=("Open Sans", 14), bg="light green")
+
+    mensaje_perdio_partida = Label(ventana_juego, text="¡UPS! No lo has conseguido en esta \n¡A la próxima!",
+                                   font=("Open Sans", 12), bg="#f25363")
+
+    mensaje_limite_tiempo = Label(ventana_juego, text="¡Oh oh!\n ¡Te has quedado sin tiempo!", font=("Open Sans", 12),
+                                  bg="#f25363")
+
+    entry_tiempo_limite = Entry(ventana_juego, font=("Open Sans", 13), borderwidth=0, justify="center", bg="pink", textvariable=tiempo_limite)
+
+    crono_label = Label(ventana_juego, bg="yellow", text="00:00:00", font=("Open Sans", 20))  ##################################################
 
     # -------------------------------------------- Buttons -------------------------------------------- #
 
@@ -933,12 +1443,29 @@ def juego_letras_numeros():
     save_button.grid(row=0, column=0, padx=10, pady=10)
 
     load_button = Button(save_load_buttons, image=load_button_img, borderwidth=0, bg="white", padx=40, pady=15,
-                         command=lambda: load(matriz_tablero, matriz_tabla_calificar))
+                         command=load)
     load_button.grid(row=1, column=0, padx=10, pady=10)
 
     Button(ventana_juego, image=back_button, borderwidth=0, command=ventana_juego.destroy).place(x=20, y=20)
 
     # -------------------------------------------- Código -------------------------------------------- #
+
+    if seleccion_reloj.get() == 3:
+        var_jugada_o_juego = "jugada"
+
+    else:
+        var_jugada_o_juego = "juego"
+        
+    tiempo_limite_label = Label(ventana_juego, bg="white",
+                                text=f"Ingrese tiempo límite por {var_jugada_o_juego} \nen formato 00:00:00:",
+                                font=("Open Sans", 13))
+
+    if seleccion_reloj.get() != 2:
+        if seleccion_reloj.get() != 1:
+            tiempo_limite_label.place(x=posicion_botones_izquierda + 30, y=460)
+            entry_tiempo_limite.place(x=posicion_botones_izquierda + 60, y=505)
+
+        crono_label.place(x=posicion_botones_izquierda + 90, y=600)
 
     # for para crear cuadro de los botones de las letras
     for i in range(cantidad_filas):
@@ -999,6 +1526,8 @@ boton_juego.pack(pady=0)
 boton_configuracion = Button(ventana_principal, image=options_button, borderwidth=0, command=configuracion)
 boton_configuracion.pack(pady=40)
 
+niveles = ["Nivel: Fácil", "Nivel: Medio", "Nivel: Difícil"]
+
 configuracion_guardada = []
 
 seleccion_dificultad = IntVar()
@@ -1013,6 +1542,11 @@ seleccion_posicion_panel.set(1)
 seleccion_panel = IntVar()
 seleccion_panel.set(1)
 
+top_10 = {}
+jugadas_nivel_facil = []
+jugadas_nivel_medio = []
+jugadas_nivel_dificil = []
+
 try:
     archivo_config = open("mastermind2022configuracion.dat", "rb")
 
@@ -1026,6 +1560,18 @@ try:
     seleccion_reloj.set(configuracion_guardada[1])
     seleccion_posicion_panel.set(configuracion_guardada[2])
     seleccion_panel.set(configuracion_guardada[3])
+    archivo_config.close()
+except FileNotFoundError:
+    pass
+
+try:
+    archivo_top = open("mastermind2022top10.dat", "rb")
+    top_10 = pickle.load(archivo_top)
+    archivo_top.close()
+    
+    jugadas_nivel_facil = top_10["Facil"]
+    jugadas_nivel_medio = top_10["Medio"]
+    jugadas_nivel_dificil = top_10["Dificil"]
 except FileNotFoundError:
     pass
 
