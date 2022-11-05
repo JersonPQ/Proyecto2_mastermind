@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 import random
 import pickle
-from datetime import datetime, date
+from datetime import datetime
 from fpdf import FPDF
 import subprocess
 
@@ -147,7 +147,7 @@ def juego_colores():
     cantidad_columnas = 4
     matriz_tablero = []
     matriz_tabla_calificar = []
-    posicion_fila = 0
+    posicion_fila = -1
     negros = 0
     blancos = 0
 
@@ -186,7 +186,7 @@ def juego_colores():
                 iniciar_crono_por_jugada()
 
             started = True
-            posicion_fila = 0
+            posicion_fila = -1
             negros = 0
             blancos = 0
             secuencia_a_adivinar = random.choices(opciones, k=4)
@@ -355,20 +355,21 @@ def juego_colores():
 
             return
 
-        posicion_fila += 1
+        posicion_fila -= 1
 
         # si posicion de fila es == a cantidad de filas se cambia el boton y se "reinicia el conteo de filas"
-        if posicion_fila == cantidad_filas:
+        if abs(posicion_fila) > cantidad_filas:
             boton_start.configure(image=start_button, command=lambda: start())
             started = False
             mensaje_perdio_partida.place(x=posicion_botones_izquierda + 30, y=650)
+            pausar_reset_crono()
             print("No lo has conseguido, A LA PRÓXIMA")
             return
 
         # si la fila en la que se está es mayor que 0 y menor o igual que el numero de filas, entonces habilita el poder
         # dar click como boton, y deshabilita el anterior que estaba habilitado
-        if 0 < posicion_fila <= cantidad_filas:
-            for cuadro in matriz_tablero[posicion_fila - 1]:
+        if 1 < abs(posicion_fila) <= cantidad_filas:
+            for cuadro in matriz_tablero[posicion_fila + 1]:
                 cuadro.unbind("<Button-1>")
 
             for cuadro in matriz_tablero[posicion_fila]:
@@ -848,7 +849,7 @@ def juego_letras_numeros():
     cantidad_columnas = 4
     matriz_tablero = []
     matriz_tabla_calificar = []
-    posicion_fila = 0
+    posicion_fila = -1
     negros = 0
     blancos = 0
 
@@ -886,7 +887,7 @@ def juego_letras_numeros():
                 iniciar_crono_por_jugada()
 
             started = True
-            posicion_fila = 0
+            posicion_fila = -1
             negros = 0
             blancos = 0
             secuencia_a_adivinar = random.choices(opciones, k=4)
@@ -1057,20 +1058,21 @@ def juego_letras_numeros():
 
             return
 
-        posicion_fila += 1
+        posicion_fila -= 1
 
         # si posicion de fila es == a cantidad de filas se cambia el boton y se "reinicia el conteo de filas"
-        if posicion_fila == cantidad_filas:
+        if abs(posicion_fila) > cantidad_filas:
             boton_start.configure(image=start_button, command=lambda: start())
             started = False
             mensaje_perdio_partida.place(x=posicion_botones_izquierda + 30, y=650)
+            pausar_reset_crono()
             print("No lo has conseguido, A LA PRÓXIMA")
             return
 
         # si la fila en la que se está es mayor que 0 y menor o igual que el numero de filas, entonces habilita el poder
         # dar click como boton, y deshabilita el anterior que estaba habilitado
-        if 0 < posicion_fila <= cantidad_filas:
-            for cuadro in matriz_tablero[posicion_fila - 1]:
+        if 1 < abs(posicion_fila) <= cantidad_filas:
+            for cuadro in matriz_tablero[posicion_fila + 1]:
                 cuadro.unbind("<Button-1>")
 
             for cuadro in matriz_tablero[posicion_fila]:
@@ -1582,7 +1584,7 @@ def top10_resumen():
     
     # -------------------------------------------- Buttons -------------------------------------------- #
     
-    Button(ventana_top10_resumen, text="Ver resumen", bg="orange", font=("Open Sans", 15), command=crea_top10_resumen).place(relx=0.45, y=400)
+    Button(ventana_top10_resumen, image=open_summary_button, borderwidth=0, command=crea_top10_resumen).place(x=650, y=400)
     
     Button(ventana_top10_resumen, image=back_button, borderwidth=0, command=ventana_top10_resumen.destroy).place(x=20, y=20)
     
@@ -1593,7 +1595,7 @@ def top10_detalle():
     ventana_top10_detalle.geometry("1466x768")
     ventana_top10_detalle.configure(bg="white")
     ventana_top10_detalle.state("zoomed")
-    
+        
     pdf_top10_detalle_facil = FPDF()
     pdf_top10_detalle_facil.add_page()
     pdf_top10_detalle_facil.set_font("Arial", "", 11)
@@ -1697,9 +1699,16 @@ def top10_detalle():
     
     # -------------------------------------------- Buttons -------------------------------------------- #
     
-    Button(ventana_top10_detalle, text="Ver detalles", bg="orange", font=("Open Sans", 15), command=crea_top10_detalle).place(relx=0.45, y=400)
+    Button(ventana_top10_detalle, image=open_details_button, borderwidth=0, command=crea_top10_detalle).place(x=650, y=400)
     
     Button(ventana_top10_detalle, image=back_button, borderwidth=0, command=ventana_top10_detalle.destroy).place(x=20, y=20)
+    
+    
+def help_function():
+    subprocess.Popen("Jerson_Prendas_Quiros_manual_de_usuario_mastermind.pdf", shell=True)
+    
+def about_function():
+    messagebox.showinfo(title="Mastermind Info", message="Juego Mastermind \nVersión 1.0 \nFecha de creación: 6/11/2022 \nAutor: Jerson Prendas Quirós")
     
 # -------------------------------------------- Ventana Principal -------------------------------------------- #
 
@@ -1713,29 +1722,37 @@ fondo_principal = PhotoImage(file="Fondo_principal.png")
 back_button = PhotoImage(file="VOLVER_(boton).png")
 play_button = PhotoImage(file="PLAY_button_recortado_(boton).png")
 options_button = PhotoImage(file="OPTIONS_button_recortado_(boton).png")
+top10_summary_button = PhotoImage(file="Summary_top10_recortado_(boton).png")
+top10_details_button = PhotoImage(file="Details_top10_recortado_(boton).png")
+help_button = PhotoImage(file="Help_recortado_(boton).png")
+about_button = PhotoImage(file="About_recortado_(boton).png")
+quit_button = PhotoImage(file="Quit_recortado_(boton).png")
+open_summary_button = PhotoImage(file="Open_summary_recortado_(boton).png")
+open_details_button = PhotoImage(file="Open_details_recortado_(boton).png")
+
 
 # -------------------------------------------- Labels -------------------------------------------- #
 
 Label(ventana_principal, image=fondo_principal).place(x=0, y=0)
 
-Label(ventana_principal, image=logo_mastermind, borderwidth=0).pack(pady=80)
+Label(ventana_principal, image=logo_mastermind, borderwidth=0).pack(pady=70)
 
 # -------------------------------------------- Buttons -------------------------------------------- #
 
 boton_juego = Button(ventana_principal, image=play_button, borderwidth=0, command=juego)
 boton_juego.pack()
 
-Button(ventana_principal, image=options_button, borderwidth=0, command=configuracion).pack(pady=30)
+Button(ventana_principal, image=options_button, borderwidth=0, command=configuracion).pack(pady=20)
 
-Button(ventana_principal, width=20, height=2, text="Top 10 Resumen", command=top10_resumen).pack()
+Button(ventana_principal, image=top10_summary_button, borderwidth=0, command=top10_resumen).pack()
 
-Button(ventana_principal, width=20, height=2, text="Top 10 Detalle", command=top10_detalle).pack(pady=30)
+Button(ventana_principal, image=top10_details_button, borderwidth=0, command=top10_detalle).pack(pady=20)
 
-Button(ventana_principal, width=20, height=2, text="Ayuda").pack()
+Button(ventana_principal, image=help_button, borderwidth=0, command=help_function).pack()
 
-Button(ventana_principal, width=20, height=2, text="ABOUT").pack(pady=30)
+Button(ventana_principal, image=about_button, borderwidth=0, command=about_function).pack(pady=20)
 
-Button(ventana_principal, width=20, height=2, text="QUIT", command=ventana_principal.quit).pack()
+Button(ventana_principal, image=quit_button, borderwidth=0, command=ventana_principal.quit).pack()
 
 # -------------------------------------------- Código -------------------------------------------- #
 
