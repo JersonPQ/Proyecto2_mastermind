@@ -2,7 +2,9 @@ from tkinter import *
 from tkinter import messagebox
 import random
 import pickle
-from datetime import datetime
+from datetime import datetime, date
+from fpdf import FPDF
+import subprocess
 
 
 def configuracion():
@@ -1505,6 +1507,202 @@ def juego():
         juego_letras_numeros()
 
 
+def top10_resumen():
+    ventana_top10_resumen = Toplevel()
+    ventana_top10_resumen.title("Mastermind")
+    ventana_top10_resumen.geometry("1466x768")
+    ventana_top10_resumen.configure(bg="white")
+    ventana_top10_resumen.state("zoomed")
+    
+    pdf_top10_resumen_facil = FPDF()
+    pdf_top10_resumen_facil.add_page()
+    pdf_top10_resumen_facil.set_font("Arial", "", 12)
+    pdf_top10_resumen_facil.cell(w=0, h=12, txt="Resumen Top 10", ln=1, align="C")
+    pdf_top10_resumen_facil.cell(w=0, h=12, txt="Nivel: Fácil", ln=1, align="C")
+    pdf_top10_resumen_facil.cell(w=50, h=12, txt="Jugador/a", align="C")
+    pdf_top10_resumen_facil.multi_cell(w=30, h=12, txt="Tiempo", align="C")
+
+    for i_jugada, jugada in enumerate(jugadas_nivel_facil):
+        pdf_top10_resumen_facil.cell(w=50, h=12, txt=f"{i_jugada + 1}- {jugada[0]}", align="C")
+        pdf_top10_resumen_facil.multi_cell(w=30, h=12, txt=jugada[1], align="C")
+        
+        
+    pdf_top10_resumen_medio = FPDF()
+    pdf_top10_resumen_medio.add_page()
+    pdf_top10_resumen_medio.set_font("Arial", "", 12)
+    pdf_top10_resumen_medio.cell(w=0, h=12, txt="Resumen Top 10", ln=1, align="C")
+    pdf_top10_resumen_medio.cell(w=0, h=12, txt="Nivel: Medio", ln=1, align="C")
+    pdf_top10_resumen_medio.cell(w=50, h=12, txt="Jugado/a", align="C")
+    pdf_top10_resumen_medio.multi_cell(w=30, h=12, txt="Tiempo", align="C")
+
+    for i_jugada, jugada in enumerate(jugadas_nivel_medio):
+        pdf_top10_resumen_medio.cell(w=50, h=12, txt=f"{i_jugada + 1}- {jugada[0]}", align="C")
+        pdf_top10_resumen_medio.multi_cell(w=30, h=12, txt=jugada[1], align="C")
+        
+        
+    pdf_top10_resumen_dificil = FPDF()
+    pdf_top10_resumen_dificil.add_page()
+    pdf_top10_resumen_dificil.set_font("Arial", "", 12)
+    pdf_top10_resumen_dificil.cell(w=0, h=12, txt="Resumen Top 10", ln=1, align="C")
+    pdf_top10_resumen_dificil.cell(w=0, h=12, txt="Nivel: Difícil", ln=1, align="C")
+    pdf_top10_resumen_dificil.cell(w=50, h=12, txt="Jugador/a", align="C")
+    pdf_top10_resumen_dificil.multi_cell(w=30, h=12, txt="Tiempo", align="C")
+
+    for i_jugada, jugada in enumerate(jugadas_nivel_dificil):
+        pdf_top10_resumen_dificil.cell(w=50, h=12, txt=f"{i_jugada + 1}- {jugada[0]}", align="C")
+        pdf_top10_resumen_dificil.multi_cell(w=30, h=12, txt=jugada[1], align="C")
+    
+    seleccion_nivel_top10_resumen = IntVar()
+    seleccion_nivel_top10_resumen.set(1)
+    
+    # -------------------------------------------- Funciones -------------------------------------------- #
+    
+    def crea_top10_resumen():
+        if seleccion_nivel_top10_resumen.get() == 1:
+            pdf_top10_resumen_facil.output("Top_10_resumen_nivel_Facil.pdf")
+            subprocess.Popen("Top_10_resumen_nivel_Facil.pdf", shell=True)
+        elif seleccion_nivel_top10_resumen.get() == 2:
+            pdf_top10_resumen_medio.output("Top_10_resumen_nivel_Medio.pdf")
+            subprocess.Popen("Top_10_resumen_nivel_Medio.pdf", shell=True)
+        else:
+            pdf_top10_resumen_dificil.output("Top_10_resumen_nivel_Dificil.pdf")
+            subprocess.Popen("Top_10_resumen_nivel_Dificil.pdf", shell=True)
+        
+        ventana_top10_resumen.destroy()
+        
+    # -------------------------------------------- Labels -------------------------------------------- #
+    
+    Label(ventana_top10_resumen, image=fondo_principal).place(x=0, y=0)
+    
+    # -------------------------------------------- Radiobuttons -------------------------------------------- #
+    
+    Radiobutton(ventana_top10_resumen, text="Nivel Fácil", bg="white", font=("Open Sans", 15), variable=seleccion_nivel_top10_resumen, value=1).place(relx=0.45, y=200)
+    Radiobutton(ventana_top10_resumen, text="Nivel Medio", bg="white", font=("Open Sans", 15), variable=seleccion_nivel_top10_resumen, value=2).place(relx=0.45, y=250)
+    Radiobutton(ventana_top10_resumen, text="Nivel Difícil", bg="white", font=("Open Sans", 15), variable=seleccion_nivel_top10_resumen, value=3).place(relx=0.45, y=300)
+    
+    # -------------------------------------------- Buttons -------------------------------------------- #
+    
+    Button(ventana_top10_resumen, text="Ver resumen", bg="orange", font=("Open Sans", 15), command=crea_top10_resumen).place(relx=0.45, y=400)
+    
+    Button(ventana_top10_resumen, image=back_button, borderwidth=0, command=ventana_top10_resumen.destroy).place(x=20, y=20)
+    
+    
+def top10_detalle():
+    ventana_top10_detalle = Toplevel()
+    ventana_top10_detalle.title("Mastermind")
+    ventana_top10_detalle.geometry("1466x768")
+    ventana_top10_detalle.configure(bg="white")
+    ventana_top10_detalle.state("zoomed")
+    
+    pdf_top10_detalle_facil = FPDF()
+    pdf_top10_detalle_facil.add_page()
+    pdf_top10_detalle_facil.set_font("Arial", "", 11)
+    pdf_top10_detalle_facil.cell(w=0, h=12, txt="Detalle Top 10", ln=1, align="C")
+    pdf_top10_detalle_facil.cell(w=0, h=12, txt="Nivel: Fácil", ln=1, align="C")
+    pdf_top10_detalle_facil.cell(w=30, h=12, txt="Jugador/a", align="C")
+    pdf_top10_detalle_facil.cell(w=10, h=12, txt="Tiempo", align="C")
+    pdf_top10_detalle_facil.cell(w=70, h=12, txt="Combinación", align="C")
+    pdf_top10_detalle_facil.cell(w=25, h=12, txt="Fecha", align="C")
+    pdf_top10_detalle_facil.cell(w=30, h=12, txt="Hora", align="C")
+    pdf_top10_detalle_facil.multi_cell(w=0, h=12, txt="T/J", align="C")
+
+    for i_jugada, jugada in enumerate(jugadas_nivel_facil):
+        pdf_top10_detalle_facil.cell(w=30, h=12, txt=f"{i_jugada + 1}- {jugada[0]}", align="C")
+        pdf_top10_detalle_facil.cell(w=10, h=12, txt=jugada[1], align="C")
+        pdf_top10_detalle_facil.cell(w=70, h=12, txt=f"{jugada[2][0]} {jugada[2][1]} {jugada[2][2]} {jugada[2][3]}", align="C")
+        pdf_top10_detalle_facil.cell(w=25, h=12, txt=str(jugada[3]), align="C")
+        pdf_top10_detalle_facil.cell(w=30, h=12, txt=str(jugada[4])[:8], align="C")
+        pdf_top10_detalle_facil.multi_cell(w=0, h=12, txt=f"1. {jugada[5][0]}", align="R")
+        
+        if len(jugada[5]) > 1:
+            for i_tiempo_jugada, tiempo_jugada in enumerate(jugada[5][1:]):
+                pdf_top10_detalle_facil.cell(w=0, h=12, txt=f"{i_tiempo_jugada + 2}. {tiempo_jugada}", ln=1, align="R")
+        
+    pdf_top10_detalle_medio = FPDF()
+    pdf_top10_detalle_medio.add_page()
+    pdf_top10_detalle_medio.set_font("Arial", "", 11)
+    pdf_top10_detalle_medio.cell(w=0, h=12, txt="Detalle Top 10", ln=1, align="C")
+    pdf_top10_detalle_medio.cell(w=0, h=12, txt="Nivel: Medio", ln=1, align="C")
+    pdf_top10_detalle_medio.cell(w=30, h=12, txt="Jugador/a", align="C")
+    pdf_top10_detalle_medio.cell(w=10, h=12, txt="Tiempo", align="C")
+    pdf_top10_detalle_medio.cell(w=70, h=12, txt="Combinación", align="C")
+    pdf_top10_detalle_medio.cell(w=25, h=12, txt="Fecha", align="C")
+    pdf_top10_detalle_medio.cell(w=30, h=12, txt="Hora", align="C")
+    pdf_top10_detalle_medio.multi_cell(w=0, h=12, txt="T/J", align="C")
+
+    for i_jugada, jugada in enumerate(jugadas_nivel_medio):
+        pdf_top10_detalle_medio.cell(w=30, h=12, txt=f"{i_jugada + 1}- {jugada[0]}", align="C")
+        pdf_top10_detalle_medio.cell(w=10, h=12, txt=jugada[1], align="C")
+        pdf_top10_detalle_medio.cell(w=70, h=12, txt=f"{jugada[2][0]} {jugada[2][1]} {jugada[2][2]} {jugada[2][3]}", align="C")
+        pdf_top10_detalle_medio.cell(w=25, h=12, txt=str(jugada[3]), align="C")
+        pdf_top10_detalle_medio.cell(w=30, h=12, txt=str(jugada[4])[:8], align="C")
+        pdf_top10_detalle_medio.multi_cell(w=0, h=12, txt=f"1. {jugada[5][0]}", align="R")
+        
+        if len(jugada[5]) > 1:
+            for i_tiempo_jugada, tiempo_jugada in enumerate(jugada[5][1:]):
+                pdf_top10_detalle_medio.cell(w=0, h=12, txt=f"{i_tiempo_jugada + 2}. {tiempo_jugada}", ln=1, align="R")
+        
+        
+    pdf_top10_detalle_dificil = FPDF()
+    pdf_top10_detalle_dificil.add_page()
+    pdf_top10_detalle_dificil.set_font("Arial", "", 11)
+    pdf_top10_detalle_dificil.cell(w=0, h=12, txt="Detalle Top 10", ln=1, align="C")
+    pdf_top10_detalle_dificil.cell(w=0, h=12, txt="Nivel: Difícil", ln=1, align="C")
+    pdf_top10_detalle_dificil.cell(w=30, h=12, txt="Jugador/a", align="C")
+    pdf_top10_detalle_dificil.cell(w=10, h=12, txt="Tiempo", align="C")
+    pdf_top10_detalle_dificil.cell(w=70, h=12, txt="Combinación", align="C")
+    pdf_top10_detalle_dificil.cell(w=25, h=12, txt="Fecha", align="C")
+    pdf_top10_detalle_dificil.cell(w=30, h=12, txt="Hora", align="C")
+    pdf_top10_detalle_dificil.multi_cell(w=0, h=12, txt="T/J", align="C")
+
+    for i_jugada, jugada in enumerate(jugadas_nivel_dificil):
+        pdf_top10_detalle_dificil.cell(w=30, h=12, txt=f"{i_jugada + 1}- {jugada[0]}", align="C")
+        pdf_top10_detalle_dificil.cell(w=10, h=12, txt=jugada[1], align="C")
+        pdf_top10_detalle_dificil.cell(w=70, h=12, txt=f"{jugada[2][0]} {jugada[2][1]} {jugada[2][2]} {jugada[2][3]}", align="C")
+        pdf_top10_detalle_dificil.cell(w=25, h=12, txt=str(jugada[3]), align="C")
+        pdf_top10_detalle_dificil.cell(w=30, h=12, txt=str(jugada[4])[:8], align="C")
+        pdf_top10_detalle_dificil.multi_cell(w=0, h=12, txt=f"1. {jugada[5][0]}", align="R")
+        
+        if len(jugada[5]) > 1:
+            for i_tiempo_jugada, tiempo_jugada in enumerate(jugada[5][1:]):
+                pdf_top10_detalle_dificil.cell(w=0, h=12, txt=f"{i_tiempo_jugada + 2}. {tiempo_jugada}", ln=1, align="R")
+    
+    seleccion_nivel_top10_detalle = IntVar()
+    seleccion_nivel_top10_detalle.set(1)
+    
+    # -------------------------------------------- Funciones -------------------------------------------- #
+    
+    def crea_top10_detalle():
+        if seleccion_nivel_top10_detalle.get() == 1:
+            pdf_top10_detalle_facil.output("Top_10_detalle_nivel_Facil.pdf")
+            subprocess.Popen("Top_10_detalle_nivel_Facil.pdf", shell=True)
+        elif seleccion_nivel_top10_detalle.get() == 2:
+            pdf_top10_detalle_medio.output("Top_10_detalle_nivel_Medio.pdf")
+            subprocess.Popen("Top_10_detalle_nivel_Medio.pdf", shell=True)
+        else:
+            pdf_top10_detalle_dificil.output("Top_10_detalle_nivel_Dificil.pdf")
+            subprocess.Popen("Top_10_detalle_nivel_Dificil.pdf", shell=True)
+        
+        ventana_top10_detalle.destroy()
+        
+    # -------------------------------------------- Labels -------------------------------------------- #
+
+    Label(ventana_top10_detalle, image=fondo_principal).place(x=0, y=0)
+    
+    # -------------------------------------------- Radiobuttons -------------------------------------------- #
+    
+    Radiobutton(ventana_top10_detalle, text="Nivel Fácil", bg="white", font=("Open Sans", 15), variable=seleccion_nivel_top10_detalle, value=1).place(relx=0.45, y=200)
+    Radiobutton(ventana_top10_detalle, text="Nivel Medio", bg="white", font=("Open Sans", 15), variable=seleccion_nivel_top10_detalle, value=2).place(relx=0.45, y=250)
+    Radiobutton(ventana_top10_detalle, text="Nivel Difícil", bg="white", font=("Open Sans", 15), variable=seleccion_nivel_top10_detalle, value=3).place(relx=0.45, y=300)
+    
+    # -------------------------------------------- Buttons -------------------------------------------- #
+    
+    Button(ventana_top10_detalle, text="Ver detalles", bg="orange", font=("Open Sans", 15), command=crea_top10_detalle).place(relx=0.45, y=400)
+    
+    Button(ventana_top10_detalle, image=back_button, borderwidth=0, command=ventana_top10_detalle.destroy).place(x=20, y=20)
+    
+# -------------------------------------------- Ventana Principal -------------------------------------------- #
+
 ventana_principal = Tk()
 ventana_principal.title("Mastermind")
 ventana_principal.geometry("1466x768")
@@ -1516,17 +1714,30 @@ back_button = PhotoImage(file="VOLVER_(boton).png")
 play_button = PhotoImage(file="PLAY_button_recortado_(boton).png")
 options_button = PhotoImage(file="OPTIONS_button_recortado_(boton).png")
 
+# -------------------------------------------- Labels -------------------------------------------- #
+
 Label(ventana_principal, image=fondo_principal).place(x=0, y=0)
 
-Label(ventana_principal, image=logo_mastermind, borderwidth=0).pack(pady=150)
+Label(ventana_principal, image=logo_mastermind, borderwidth=0).pack(pady=80)
+
+# -------------------------------------------- Buttons -------------------------------------------- #
 
 boton_juego = Button(ventana_principal, image=play_button, borderwidth=0, command=juego)
-boton_juego.pack(pady=0)
+boton_juego.pack()
 
-boton_configuracion = Button(ventana_principal, image=options_button, borderwidth=0, command=configuracion)
-boton_configuracion.pack(pady=40)
+Button(ventana_principal, image=options_button, borderwidth=0, command=configuracion).pack(pady=30)
 
-niveles = ["Nivel: Fácil", "Nivel: Medio", "Nivel: Difícil"]
+Button(ventana_principal, width=20, height=2, text="Top 10 Resumen", command=top10_resumen).pack()
+
+Button(ventana_principal, width=20, height=2, text="Top 10 Detalle", command=top10_detalle).pack(pady=30)
+
+Button(ventana_principal, width=20, height=2, text="Ayuda").pack()
+
+Button(ventana_principal, width=20, height=2, text="ABOUT").pack(pady=30)
+
+Button(ventana_principal, width=20, height=2, text="QUIT", command=ventana_principal.quit).pack()
+
+# -------------------------------------------- Código -------------------------------------------- #
 
 configuracion_guardada = []
 
@@ -1542,7 +1753,11 @@ seleccion_posicion_panel.set(1)
 seleccion_panel = IntVar()
 seleccion_panel.set(1)
 
-top_10 = {}
+top_10 = {
+    "Facil": [],
+    "Medio": [],
+    "Dificil": []
+}
 jugadas_nivel_facil = []
 jugadas_nivel_medio = []
 jugadas_nivel_dificil = []
