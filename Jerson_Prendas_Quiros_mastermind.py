@@ -168,13 +168,14 @@ def juego_colores():
 
         if not started and 30 >= len(entrada_nombre_jugador.get()) >= 2:
             if seleccion_reloj.get() != 2:
-                if (seleccion_reloj.get() == 3 or seleccion_reloj.get() == 4) and not ("02:59:59" >= entry_tiempo_limite.get() >= "00:00:02"):
+                if (seleccion_reloj.get() == 3 or seleccion_reloj.get() == 4) and not ("02:59:59" >= entry_tiempo_limite.get() >= "00:00:02" and len(entry_tiempo_limite.get()) == 8):
+                    messagebox.showerror("¡Oh oh!", "Favor ingresa un límite de tiempo entre 00:00:02 y 02:59:59")
                     print("Favor primero poner tiempo límite")
                     return
 
                 started = True
                 corriendo_crono = False
-                # entry_tiempo_limite.config(state="disabled")  #################################### terminar
+                entry_tiempo_limite.config(state="disabled")
                 iniciar_crono()
 
             if seleccion_reloj.get() == 1:
@@ -192,6 +193,7 @@ def juego_colores():
             secuencia_a_adivinar = random.choices(opciones, k=4)
 
             boton_start.configure(image=check_button, command=lambda: cambiar_fila(posicion_fila))
+            entrada_nombre_jugador.config(state="disabled")
             mensaje_limite_tiempo.place_forget()
             mensaje_perdio_partida.place_forget()
             mensaje_gano_partida.place_forget()
@@ -213,6 +215,7 @@ def juego_colores():
             print(f"Secuencia a adivinar: {secuencia_a_adivinar}")
             print("Juego iniciado")
         else:
+            messagebox.showerror("¡Oh oh!", "Favor ingresar un nombre entre 2 y 30 caracteres")
             print("Favor ingrese un nombre entre 2 y 30 caracteres.")
 
     def cancel():
@@ -228,6 +231,9 @@ def juego_colores():
             negros = 0
             blancos = 0
             boton_start.configure(image=start_button, command=lambda: start())
+            entrada_nombre_jugador.config(state="normal")
+            entry_tiempo_limite.config(state="normal")
+            
             pausar_reset_crono()
 
             # deshabilita los cuadritos de el tablero
@@ -247,6 +253,7 @@ def juego_colores():
 
             print("Juego cancelado")
         else:
+            messagebox.showerror("¡Oh oh!", "Para cancelar una partida primero debes iniciarla")
             print("Juego no ha sido iniciado")
 
     def poner_opcion(label):
@@ -314,6 +321,8 @@ def juego_colores():
 
         if negros == 4:
             boton_start.configure(image=start_button, command=start)
+            entrada_nombre_jugador.config(state="normal")
+            entry_tiempo_limite.config(state="normal")
             started = False
             mensaje_gano_partida.place(x=posicion_botones_izquierda + 40, y=650)
 
@@ -362,6 +371,8 @@ def juego_colores():
             boton_start.configure(image=start_button, command=lambda: start())
             started = False
             mensaje_perdio_partida.place(x=posicion_botones_izquierda + 30, y=650)
+            entrada_nombre_jugador.config(state="normal")
+            entry_tiempo_limite.config(state="normal")
             pausar_reset_crono()
             print("No lo has conseguido, A LA PRÓXIMA")
             return
@@ -473,6 +484,8 @@ def juego_colores():
             opcion_seleccionada = opciones[0]
             opcion_del_momento = opcion_seleccionada
             opcion_del_momento_label.config(bg=opcion_del_momento)
+            entrada_nombre_jugador.config(state="disabled")
+            entry_tiempo_limite.config(state="disabled")
 
             # resetea el label del nivel
             nivel_label.config(text=nivel)
@@ -596,6 +609,8 @@ def juego_colores():
             mensaje_limite_tiempo.place(x=posicion_botones_izquierda + 40, y=650)
             started = False
             boton_start.configure(image=start_button, command=lambda: start())
+            entrada_nombre_jugador.config(state="normal")
+            entry_tiempo_limite.config(state="normal")
             pausar_reset_crono()
 
             # deshabilita los cuadritos de el tablero
@@ -720,7 +735,7 @@ def juego_colores():
 
     entry_tiempo_limite = Entry(ventana_juego, font=("Open Sans", 13), borderwidth=0, justify="center", bg="pink", textvariable=tiempo_limite)
 
-    crono_label = Label(ventana_juego, bg="yellow", text="00:00:00", font=("Open Sans", 20))
+    crono_label = Label(ventana_juego, bg="white", text="00:00:00", font=("Open Sans", 20))
 
     # -------------------------------------------- Buttons -------------------------------------------- #
 
@@ -869,13 +884,14 @@ def juego_letras_numeros():
 
         if not started and 30 >= len(entrada_nombre_jugador.get()) >= 2:
             if seleccion_reloj.get() != 2:
-                if (seleccion_reloj.get() == 3 or seleccion_reloj.get() == 4) and not ("02:59:59" >= entry_tiempo_limite.get() >= "00:00:02"):
+                if (seleccion_reloj.get() == 3 or seleccion_reloj.get() == 4) and not ("02:59:59" >= entry_tiempo_limite.get() >= "00:00:02" and len(entry_tiempo_limite.get()) == 8):
+                    messagebox.showerror("¡Oh oh!", "Favor ingresa un límite de tiempo entre 00:00:02 y 02:59:59")
                     print("Favor primero poner tiempo límite")
                     return
 
                 started = True
                 corriendo_crono = False
-                # entry_tiempo_limite.config(state="disabled")  #################################### terminar
+                entry_tiempo_limite.config(state="disabled")
                 iniciar_crono()
 
             if seleccion_reloj.get() == 1:
@@ -893,6 +909,7 @@ def juego_letras_numeros():
             secuencia_a_adivinar = random.choices(opciones, k=4)
 
             boton_start.configure(image=check_button, command=lambda: cambiar_fila(posicion_fila))
+            entrada_nombre_jugador.config(state="disabled")
             mensaje_limite_tiempo.place_forget()
             mensaje_perdio_partida.place_forget()
             mensaje_gano_partida.place_forget()
@@ -914,6 +931,7 @@ def juego_letras_numeros():
             print(f"Secuencia a adivinar: {secuencia_a_adivinar}")
             print("Juego iniciado")
         else:
+            messagebox.showerror("¡Oh oh!", "Favor ingresar un nombre entre 2 y 30 caracteres")
             print("Favor ingrese un nombre entre 2 y 30 caracteres.")
 
 
@@ -930,6 +948,9 @@ def juego_letras_numeros():
             negros = 0
             blancos = 0
             boton_start.configure(image=start_button, command=lambda: start())
+            entrada_nombre_jugador.config(state="normal")
+            entry_tiempo_limite.config(state="normal")
+            
             pausar_reset_crono()
 
             # deshabilita los cuadritos de el tablero
@@ -949,6 +970,7 @@ def juego_letras_numeros():
 
             print("Juego cancelado")
         else:
+            messagebox.showerror("¡Oh oh!", "Para cancelar una partida primero debes iniciarla")
             print("Juego no ha sido iniciado")
 
     def poner_opcion(label):
@@ -1017,6 +1039,8 @@ def juego_letras_numeros():
 
         if negros == 4:
             boton_start.configure(image=start_button, command=start)
+            entrada_nombre_jugador.config(state="normal")
+            entry_tiempo_limite.config(state="normal")
             started = False
             mensaje_gano_partida.place(x=posicion_botones_izquierda + 40, y=650)
 
@@ -1065,6 +1089,8 @@ def juego_letras_numeros():
             boton_start.configure(image=start_button, command=lambda: start())
             started = False
             mensaje_perdio_partida.place(x=posicion_botones_izquierda + 30, y=650)
+            entrada_nombre_jugador.config(state="normal")
+            entry_tiempo_limite.config(state="normal")
             pausar_reset_crono()
             print("No lo has conseguido, A LA PRÓXIMA")
             return
@@ -1177,6 +1203,8 @@ def juego_letras_numeros():
             opcion_seleccionada = opciones[0]
             opcion_del_momento = f"Opción seleccionada: {opcion_seleccionada}"
             opcion_del_momento_label.config(text=opcion_del_momento)
+            entrada_nombre_jugador.config(state="disabled")
+            entry_tiempo_limite.config(state="disabled")
 
             # resetea el label del nivel
             nivel_label.config(text=nivel)
@@ -1300,6 +1328,8 @@ def juego_letras_numeros():
             mensaje_limite_tiempo.place(x=posicion_botones_izquierda + 40, y=650)
             started = False
             boton_start.configure(image=start_button, command=lambda: start())
+            entrada_nombre_jugador.config(state="normal")
+            entry_tiempo_limite.config(state="normal")
             pausar_reset_crono()
 
             # deshabilita los cuadritos de el tablero
@@ -1425,7 +1455,7 @@ def juego_letras_numeros():
 
     entry_tiempo_limite = Entry(ventana_juego, font=("Open Sans", 13), borderwidth=0, justify="center", bg="pink", textvariable=tiempo_limite)
 
-    crono_label = Label(ventana_juego, bg="yellow", text="00:00:00", font=("Open Sans", 20))  ##################################################
+    crono_label = Label(ventana_juego, bg="white", text="00:00:00", font=("Open Sans", 20))  ##################################################
 
     # -------------------------------------------- Buttons -------------------------------------------- #
 
@@ -1534,7 +1564,7 @@ def top10_resumen():
     pdf_top10_resumen_medio.set_font("Arial", "", 12)
     pdf_top10_resumen_medio.cell(w=0, h=12, txt="Resumen Top 10", ln=1, align="C")
     pdf_top10_resumen_medio.cell(w=0, h=12, txt="Nivel: Medio", ln=1, align="C")
-    pdf_top10_resumen_medio.cell(w=50, h=12, txt="Jugado/a", align="C")
+    pdf_top10_resumen_medio.cell(w=50, h=12, txt="Jugador/a", align="C")
     pdf_top10_resumen_medio.multi_cell(w=30, h=12, txt="Tiempo", align="C")
 
     for i_jugada, jugada in enumerate(jugadas_nivel_medio):
