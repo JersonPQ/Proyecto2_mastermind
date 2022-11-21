@@ -6,8 +6,8 @@ from datetime import datetime
 from fpdf import FPDF
 import subprocess
 
-
 def configuracion():
+    ventana_principal.withdraw()
     ventana_configuracion = Toplevel()
     ventana_configuracion.title("Mastermind")
     ventana_configuracion.geometry("1466x768")
@@ -25,6 +25,7 @@ def configuracion():
         pickle.dump(seleccion_panel.get(), configuracion_partida)
         configuracion_partida.close()
 
+        ventana_principal.deiconify()
         ventana_configuracion.destroy()
 
     # -------------------------------------------- Labels -------------------------------------------- #
@@ -41,58 +42,60 @@ def configuracion():
 
     # -------------------------------------------- Radiobuttons -------------------------------------------- #
     nivel_facil = Radiobutton(ventana_configuracion, text="Nivel Fácil", bg="white", font=("Open Sans", 12),
-                              variable=seleccion_dificultad, value=1)
-    nivel_facil.place(x=325, y=130)
+                                variable=seleccion_dificultad, value=1)
+    nivel_facil.place(x=325, y=120)
 
     nivel_medio = Radiobutton(ventana_configuracion, text="Nivel Medio", bg="white", font=("Open Sans", 12),
-                              variable=seleccion_dificultad, value=2)
-    nivel_medio.place(x=325, y=170)
+                                variable=seleccion_dificultad, value=2)
+    nivel_medio.place(x=325, y=160)
 
     nivel_dificil = Radiobutton(ventana_configuracion, text="Nivel Difícil", bg="white", font=("Open Sans", 12),
                                 variable=seleccion_dificultad, value=3)
-    nivel_dificil.place(x=325, y=210)
+    nivel_dificil.place(x=325, y=200)
+    
+    multinivel = Radiobutton(ventana_configuracion, text="Multinivel", bg="white", font=("Open Sans", 12), 
+                                variable=seleccion_dificultad, value=4)
+    multinivel.place(x=325, y=240)
 
     reloj_si = Radiobutton(ventana_configuracion, text="Si", bg="white", font=("Open Sans", 12),
-                           variable=seleccion_reloj,
-                           value=1)
+                            variable=seleccion_reloj, value=1)
     reloj_si.place(x=325, y=470)
 
     reloj_no = Radiobutton(ventana_configuracion, text="No", bg="white", font=("Open Sans", 12),
-                           variable=seleccion_reloj,
-                           value=2)
+                            variable=seleccion_reloj, value=2)
     reloj_no.place(x=325, y=510)
 
     reloj_por_jugada = Radiobutton(ventana_configuracion, text="Cronómetro por jugada", bg="white",
-                                   font=("Open Sans", 12),
-                                   variable=seleccion_reloj, value=3)
+                                    font=("Open Sans", 12), variable=seleccion_reloj, value=3)
     reloj_por_jugada.place(x=325, y=550)
 
     reloj_por_juego = Radiobutton(ventana_configuracion, text="Cronómetro por juego", bg="white",
-                                  font=("Open Sans", 12),
-                                  variable=seleccion_reloj, value=4)
+                                    font=("Open Sans", 12), variable=seleccion_reloj, value=4)
     reloj_por_juego.place(x=325, y=590)
 
     posicion_panel_derecha = Radiobutton(ventana_configuracion, text="Derecha", bg="white", font=("Open Sans", 12),
-                                         variable=seleccion_posicion_panel, value=1)
+                                            variable=seleccion_posicion_panel, value=1)
     posicion_panel_derecha.place(x=1025, y=130)
 
     posicion_panel_izquierda = Radiobutton(ventana_configuracion, text="Izquierda", bg="white", font=("Open Sans", 12),
-                                           variable=seleccion_posicion_panel, value=2)
+                                            variable=seleccion_posicion_panel, value=2)
     posicion_panel_izquierda.place(x=1025, y=170)
 
     panel_colores = Radiobutton(ventana_configuracion, text="Colores", bg="white", font=("Open Sans", 12),
-                                variable=seleccion_panel,
-                                value=1)
+                                variable=seleccion_panel, value=1)
     panel_colores.place(x=1025, y=470)
 
     panel_letras = Radiobutton(ventana_configuracion, text="Letras", bg="white", font=("Open Sans", 12),
-                               variable=seleccion_panel, value=2)
+                                variable=seleccion_panel, value=2)
     panel_letras.place(x=1025, y=510)
 
     panel_numeros = Radiobutton(ventana_configuracion, text="Números", bg="white", font=("Open Sans", 12),
-                                variable=seleccion_panel,
-                                value=3)
+                                variable=seleccion_panel, value=3)
     panel_numeros.place(x=1025, y=550)
+    
+    panel_simbolos = Radiobutton(ventana_configuracion, text="Otros símbolos", bg="white", font=("Open Sans", 12),
+                                variable=seleccion_panel, value=4)
+    panel_simbolos.place(x=1025, y=590)
 
     # -------------------------------------------- Buttons -------------------------------------------- #
     Button(ventana_configuracion, image=back_button, borderwidth=0, command=guardar_configuracion).place(x=20, y=20)
@@ -121,8 +124,10 @@ def juego_colores():
     check_button = PhotoImage(file="CALIFICAR_recortado_(boton).png")
     save_button_img = PhotoImage(file="SAVE_recortado_(boton).png")
     load_button_img = PhotoImage(file="LOAD_recortado_(boton).png")
+    undo_button_img = PhotoImage(file="undo_recortado_(boton).png")
+    redo_button_img = PhotoImage(file="redo_recortado_(boton).png")
 
-    if seleccion_dificultad.get() == 1:
+    if seleccion_dificultad.get() == 1 or seleccion_dificultad.get() == 4:
         cantidad_filas = 8
         nivel = "Nivel: Fácil"
     elif seleccion_dificultad.get() == 2:
@@ -165,6 +170,7 @@ def juego_colores():
     def start():
         global started, opciones, boton_start, posicion_fila, secuencia_a_adivinar, negros, blancos, entrada_nombre_jugador, tiempo_inicio, tiempo_limite
         global corriendo_crono, corriendo_crono_por_jugada, horas_por_jugada, minutos_por_jugada, segundos_por_jugada, tiempos_por_fila
+        global pila_deshacer_movimiento, pila_rehacer_movimiento
 
         if not started and 30 >= len(entrada_nombre_jugador.get()) >= 2:
             if seleccion_reloj.get() != 2:
@@ -191,7 +197,9 @@ def juego_colores():
             negros = 0
             blancos = 0
             secuencia_a_adivinar = random.choices(opciones, k=4)
-
+            pila_deshacer_movimiento = []
+            pila_rehacer_movimiento = []
+            
             boton_start.configure(image=check_button, command=lambda: cambiar_fila(posicion_fila))
             entrada_nombre_jugador.config(state="disabled")
             mensaje_limite_tiempo.place_forget()
@@ -203,7 +211,7 @@ def juego_colores():
                 for y in range(cantidad_columnas):
                     matriz_tablero[x][y].configure(bg="#f0f0f0")
 
-            # habilita los cuadritos que están en la fila 0
+            # habilita los cuadritos que están en la fila -1
             for cuadro in matriz_tablero[posicion_fila]:
                 cuadro.bind("<Button-1>", lambda e, btn=cuadro: poner_opcion(btn))
 
@@ -257,9 +265,14 @@ def juego_colores():
             print("Juego no ha sido iniciado")
 
     def poner_opcion(label):
+        global pila_deshacer_movimiento
+        
         if started:
             # da valor al label clickeado
             label.configure(bg=opcion_seleccionada)
+            indice_label = (matriz_tablero[posicion_fila]).index(label)
+            pila_deshacer_movimiento.append((indice_label, opcion_seleccionada))
+
             print(label)
 
     def seleccionar_opcion(label):
@@ -272,15 +285,88 @@ def juego_colores():
             opcion_del_momento_label.config(bg=opcion_del_momento, text=opcion_del_momento)
             print(label)
 
+    def deshacer_movimiento():
+        global pila_deshacer_movimiento, pila_rehacer_movimiento
+        
+        if started and pila_deshacer_movimiento != []:
+            datos_ultimo_movimiento_deshacer = pila_deshacer_movimiento[-1]
+            # antes de hacer el pop el último elemento debe agreagarse a la pila rehacer
+            pila_rehacer_movimiento.append(datos_ultimo_movimiento_deshacer)
+            pila_deshacer_movimiento.pop()
+            # busca si había un valor en la casilla a quitar en la pila de deshacer movimientos
+            for dato_pila_deshacer in reversed(pila_deshacer_movimiento):
+                if dato_pila_deshacer[0] == datos_ultimo_movimiento_deshacer[0]:
+                    matriz_tablero[posicion_fila][dato_pila_deshacer[0]].config(bg=dato_pila_deshacer[1])
+                    break                
+            else:
+                matriz_tablero[posicion_fila][datos_ultimo_movimiento_deshacer[0]].config(bg="#f0f0f0")
+    
+    def rehacer_movimiento():
+        global pila_deshacer_movimiento, pila_rehacer_movimiento
+        
+        if started and pila_rehacer_movimiento != []:
+            datos_ultimo_movimiento_rehacer = pila_rehacer_movimiento[-1]
+            matriz_tablero[posicion_fila][datos_ultimo_movimiento_rehacer[0]].config(bg=datos_ultimo_movimiento_rehacer[1])
+            pila_deshacer_movimiento.append(datos_ultimo_movimiento_rehacer)
+            pila_rehacer_movimiento.pop()
+    
+    def reiniciar_tablero_multinivel():
+        global cantidad_filas, matriz_tablero, matriz_tabla_calificar, nivel
+        
+        cantidad_filas -= 1
+        
+        if cantidad_filas == 7:
+            nivel = "Nivel: Medio"
+        elif cantidad_filas == 6:
+            nivel = "Nivel: Difícil"
+        
+        nivel_label.config(text=nivel)
+
+        # quta los labels del tablero y tabla califica
+        for fila_label in matriz_tablero:
+                for label in fila_label:
+                    label.grid_forget()
+                    
+        for fila_label_califica in matriz_tabla_calificar:
+            for label_califica in fila_label_califica:
+                label_califica.grid_forget()
+        
+        matriz_tablero = []
+        matriz_tabla_calificar = []
+        
+        # crea la nueva tabla con la cantidad de filas correspondientes
+        for i in range(cantidad_filas):
+            fila_tablero = []
+
+            for j in range(cantidad_columnas):
+                label_tablero = Label(tablero, bg="#f0f0f0", width=5, height=2)
+                label_tablero.grid(row=i, column=j, padx=10, pady=30)
+                fila_tablero.append(label_tablero)
+
+            matriz_tablero.append(fila_tablero)
+
+        # for para crear la tabla de calificación nueva con la partida guardada
+        for i in range(cantidad_filas):
+            fila_calificadora = []
+
+            for j in range(4):
+                label_calificar = Label(tabla_calificadora, text="", bg="orange", width=1)
+                label_calificar.grid(row=i, column=j, padx=5, pady=37)
+                fila_calificadora.append(label_calificar)
+
+            matriz_tabla_calificar.append(fila_calificadora)
+
     def cambiar_fila(row):
         global posicion_fila, started, secuencia_a_adivinar, negros, blancos, tiempo_partida
         global horas, minutos, segundos, horas_por_jugada, minutos_por_jugada, segundos_por_jugada
         global jugadas_nivel_facil, jugadas_nivel_medio, jugadas_nivel_dificil
+        global pila_deshacer_movimiento, pila_rehacer_movimiento, corriendo_crono_por_jugada, tiempos_por_fila
 
         negros = 0
         blancos = 0
         i_cuadrito_blanco = 0
-
+        pila_deshacer_movimiento = []
+        pila_rehacer_movimiento = []
 
         # valida de que todos los cuadritos tengan un valor y no estén vacíos
         for elemento in matriz_tablero[row]:
@@ -320,49 +406,118 @@ def juego_colores():
         print(f"Cuadritos blancos: {blancos}")
 
         if negros == 4:
-            boton_start.configure(image=start_button, command=start)
-            entrada_nombre_jugador.config(state="normal")
-            entry_tiempo_limite.config(state="normal")
-            started = False
-            mensaje_gano_partida.place(x=posicion_botones_izquierda + 40, y=650)
+            # en caso de ser multinivel y nivel fácil o medio entra al condicional
+            if seleccion_dificultad.get() == 4 and 6 < cantidad_filas <= 8:
+                if seleccion_reloj.get() != 2:
+                    # toma el tiempo que tardó en terminar la partida
+                    tiempo_partida = crono_label["text"]
+                    print(f"Tiempo en terminar la partida: {tiempo_partida}")
 
-            if seleccion_reloj.get() != 2:
-                # toma el tiempo que tardó en terminar la partida
-                tiempo_partida = crono_label["text"]
-                print(f"Tiempo en terminar la partida: {tiempo_partida}")
+                    if seleccion_reloj.get() == 1:
+                        fecha_hora = datetime.now()
 
-            if seleccion_reloj.get() == 1:
-                fecha_hora = datetime.now()
+                        if cantidad_filas == 8:
+                            jugadas_nivel_facil.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
+                        elif cantidad_filas == 7:
+                            jugadas_nivel_medio.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
+                        else:
+                            jugadas_nivel_dificil.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
 
-                if nivel == "Nivel: Fácil":
-                    jugadas_nivel_facil.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
-                elif nivel == "Nivel: Medio":
-                    jugadas_nivel_medio.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
-                else:
-                    jugadas_nivel_dificil.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
+                        # ordena las listas de manera descendente
+                        jugadas_nivel_facil = sorted(jugadas_nivel_facil, key=lambda datos: datos[1])
+                        jugadas_nivel_medio = sorted(jugadas_nivel_medio, key=lambda datos: datos[1])
+                        jugadas_nivel_dificil = sorted(jugadas_nivel_dificil, key=lambda datos: datos[1])
+                        
+                        # de la lista toma solo los 10 primeros
+                        jugadas_nivel_facil = jugadas_nivel_facil[:10]
+                        jugadas_nivel_medio = jugadas_nivel_medio[:10]
+                        jugadas_nivel_dificil = jugadas_nivel_dificil[:10]
 
-                # ordena las listas de manera descendente
-                jugadas_nivel_facil = sorted(jugadas_nivel_facil, key=lambda datos: datos[1])
-                jugadas_nivel_medio = sorted(jugadas_nivel_medio, key=lambda datos: datos[1])
-                jugadas_nivel_dificil = sorted(jugadas_nivel_dificil, key=lambda datos: datos[1])
+                        top_10["Facil"] = jugadas_nivel_facil
+                        top_10["Medio"] = jugadas_nivel_medio
+                        top_10["Dificil"] = jugadas_nivel_dificil
+
+                        archivo_top10 = open("mastermind2022top10.dat", "wb")
+                        pickle.dump(top_10, archivo_top10)
+                        archivo_top10.close()                
+                    
+                    if seleccion_reloj.get() in [3, 4]:
+                        started = False
+                        negros = 0
+                        blancos = 0
+                        boton_start.config(image=start_button, command=start)
+                        entry_tiempo_limite.config(state="normal")
+                    
+                    tiempos_por_fila = []
+                    corriendo_crono_por_jugada = False
+                    # si es por tiempo limite solo se pausa el cronómetro y este inicia al momento de clickear start
+                    if seleccion_reloj.get() in [3, 4]:
+                        pausar_reset_crono()
+                    else:
+                        pausar_reset_crono()
+                        iniciar_crono()
+                    reiniciar_tablero_multinivel()
                 
-                # de la lista toma solo los 10 primeros
-                jugadas_nivel_facil = jugadas_nivel_facil[:10]
-                jugadas_nivel_medio = jugadas_nivel_medio[:10]
-                jugadas_nivel_dificil = jugadas_nivel_dificil[:10]
+                negros = 0
+                blancos = 0
+                posicion_fila = -1
+                secuencia_a_adivinar = random.choices(opciones, k=4)
+                print(f"Secuencia a adivinar: {secuencia_a_adivinar}")
+                
+                # deshabilita los cuadritos del tablero
+                for fila in matriz_tablero:
+                    for cuadro in fila:
+                        cuadro.unbind("<Button-1>")
 
-                top_10["Facil"] = jugadas_nivel_facil
-                top_10["Medio"] = jugadas_nivel_medio
-                top_10["Dificil"] = jugadas_nivel_dificil
+                # habilita los cuadritos que están en la fila -1
+                for cuadro in matriz_tablero[posicion_fila]:
+                    cuadro.bind("<Button-1>", lambda e, btn=cuadro: poner_opcion(btn))
+                
+                return
+            else:
+                boton_start.configure(image=start_button, command=start)
+                entrada_nombre_jugador.config(state="normal")
+                entry_tiempo_limite.config(state="normal")
+                started = False
+                mensaje_gano_partida.place(x=posicion_botones_izquierda + 40, y=650)
 
-                archivo_top10 = open("mastermind2022top10.dat", "wb")
-                pickle.dump(top_10, archivo_top10)
-                archivo_top10.close()
+                if seleccion_reloj.get() != 2:
+                    # toma el tiempo que tardó en terminar la partida
+                    tiempo_partida = crono_label["text"]
+                    print(f"Tiempo en terminar la partida: {tiempo_partida}")
 
-            pausar_reset_crono()
-            print("¡HAS GANADO!")
+                if seleccion_reloj.get() == 1:
+                    fecha_hora = datetime.now()
 
-            return
+                    if cantidad_filas == 8:
+                        jugadas_nivel_facil.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
+                    elif cantidad_filas == 7:
+                        jugadas_nivel_medio.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
+                    else:
+                        jugadas_nivel_dificil.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
+
+                    # ordena las listas de manera descendente
+                    jugadas_nivel_facil = sorted(jugadas_nivel_facil, key=lambda datos: datos[1])
+                    jugadas_nivel_medio = sorted(jugadas_nivel_medio, key=lambda datos: datos[1])
+                    jugadas_nivel_dificil = sorted(jugadas_nivel_dificil, key=lambda datos: datos[1])
+                    
+                    # de la lista toma solo los 10 primeros
+                    jugadas_nivel_facil = jugadas_nivel_facil[:10]
+                    jugadas_nivel_medio = jugadas_nivel_medio[:10]
+                    jugadas_nivel_dificil = jugadas_nivel_dificil[:10]
+
+                    top_10["Facil"] = jugadas_nivel_facil
+                    top_10["Medio"] = jugadas_nivel_medio
+                    top_10["Dificil"] = jugadas_nivel_dificil
+
+                    archivo_top10 = open("mastermind2022top10.dat", "wb")
+                    pickle.dump(top_10, archivo_top10)
+                    archivo_top10.close()
+
+                pausar_reset_crono()
+                print("¡HAS GANADO!")
+
+                return
 
         posicion_fila -= 1
 
@@ -411,30 +566,33 @@ def juego_colores():
                 datos_color_calificacion.append(fila_calificacion)
 
             archivo_partida = open("mastermind2022juegoactual.dat", "wb")
-            pickle.dump(datos_cuadrito_tablero, archivo_partida)
-            pickle.dump(posicion_fila, archivo_partida)
-            pickle.dump(secuencia_a_adivinar, archivo_partida)
-            pickle.dump(entrada_nombre_jugador.get(), archivo_partida)
-            pickle.dump(datos_color_calificacion, archivo_partida)
-            pickle.dump(nivel, archivo_partida)
-            pickle.dump(opciones, archivo_partida)
-            pickle.dump(cantidad_filas, archivo_partida)
-            pickle.dump(posicion_botones_izquierda, archivo_partida)
-            pickle.dump(posicion_panel_eje_x, archivo_partida)
-            pickle.dump(seleccion_reloj.get(), archivo_partida)
+            pickle.dump(datos_cuadrito_tablero, archivo_partida) # [0]
+            pickle.dump(posicion_fila, archivo_partida) # [1]
+            pickle.dump(secuencia_a_adivinar, archivo_partida) # [2]
+            pickle.dump(entrada_nombre_jugador.get(), archivo_partida) # [3]
+            pickle.dump(datos_color_calificacion, archivo_partida) # [4]
+            pickle.dump(nivel, archivo_partida) # [5]
+            pickle.dump(opciones, archivo_partida) # [6]
+            pickle.dump(cantidad_filas, archivo_partida) # [7]
+            pickle.dump(posicion_botones_izquierda, archivo_partida) # [8]
+            pickle.dump(posicion_panel_eje_x, archivo_partida) # [9]
+            pickle.dump(seleccion_reloj.get(), archivo_partida) # [10]
+            pickle.dump(pila_deshacer_movimiento, archivo_partida) # [11]
+            pickle.dump(pila_rehacer_movimiento, archivo_partida) # [12]
 
             if seleccion_reloj.get() != 2:
-                pickle.dump(horas, archivo_partida)
-                pickle.dump(minutos, archivo_partida)
-                pickle.dump(segundos, archivo_partida)
+                pickle.dump(horas, archivo_partida) # [13]
+                pickle.dump(minutos, archivo_partida) # [14]
+                pickle.dump(segundos, archivo_partida) # [15]
 
-                if seleccion_reloj.get() in [3, 4]:
-                    pickle.dump(entry_tiempo_limite.get(), archivo_partida)
                 if seleccion_reloj.get() == 1:
-                    pickle.dump(horas_por_jugada, archivo_partida)
-                    pickle.dump(minutos_por_jugada, archivo_partida)
-                    pickle.dump(segundos_por_jugada, archivo_partida)
-                    pickle.dump(tiempos_por_fila, archivo_partida)
+                    pickle.dump(horas_por_jugada, archivo_partida) # [16]
+                    pickle.dump(minutos_por_jugada, archivo_partida) # [17]
+                    pickle.dump(segundos_por_jugada, archivo_partida) # [18]
+                    pickle.dump(tiempos_por_fila, archivo_partida) # [19]
+                
+                if seleccion_reloj.get() in [3, 4]:
+                    pickle.dump(entry_tiempo_limite.get(), archivo_partida) # [16]
 
             archivo_partida.close()
 
@@ -443,6 +601,7 @@ def juego_colores():
             fila_calificadora, cantidad_filas, label_calificar, label_tablero, fila_tablero, matriz_tablero, matriz_tabla_calificar, posicion_botones_izquierda, posicion_panel_eje_x, \
             seleccion_reloj
         global horas, minutos, segundos, corriendo_crono, tiempos_por_fila, corriendo_crono_por_jugada, horas_por_jugada, minutos_por_jugada, segundos_por_jugada
+        global pila_deshacer_movimiento, pila_rehacer_movimiento
 
         if not started:
             # quita los labels de el tablero anterior de el tablero de juego y el tablero de calificacion
@@ -473,9 +632,11 @@ def juego_colores():
             posicion_botones_izquierda = partida_guardada[8]
             posicion_panel_eje_x = partida_guardada[9]
             seleccion_reloj.set(partida_guardada[10])
+            pila_deshacer_movimiento = partida_guardada[11]
+            pila_rehacer_movimiento = partida_guardada[12]
             
             if seleccion_reloj.get() in [3, 4]:
-                tiempo_limite.set(partida_guardada[14])
+                tiempo_limite.set(partida_guardada[16])
 
             archivo_partida.close()
 
@@ -486,6 +647,9 @@ def juego_colores():
             opcion_del_momento_label.config(bg=opcion_del_momento)
             entrada_nombre_jugador.config(state="disabled")
             entry_tiempo_limite.config(state="disabled")
+            mensaje_gano_partida.place_forget()
+            mensaje_perdio_partida.place_forget()
+            mensaje_limite_tiempo.place_forget()
 
             # resetea el label del nivel
             nivel_label.config(text=nivel)
@@ -547,7 +711,7 @@ def juego_colores():
             started = True
 
             if seleccion_reloj.get() != 2:
-                horas, minutos, segundos = partida_guardada[11], partida_guardada[12], partida_guardada[13]
+                horas, minutos, segundos = partida_guardada[13], partida_guardada[14], partida_guardada[15]
                 corriendo_crono = False
                 crono_label.place(x=posicion_botones_izquierda + 90, y=600)
                 iniciar_crono()
@@ -558,10 +722,10 @@ def juego_colores():
                 entry_tiempo_limite.place_forget()
                 
                 if seleccion_reloj.get() == 1:
-                    horas_por_jugada = partida_guardada[14]
-                    minutos_por_jugada = partida_guardada[15]
-                    segundos_por_jugada = partida_guardada[16]
-                    tiempos_por_fila = partida_guardada[17]
+                    horas_por_jugada = partida_guardada[16]
+                    minutos_por_jugada = partida_guardada[17]
+                    segundos_por_jugada = partida_guardada[18]
+                    tiempos_por_fila = partida_guardada[19]
                     corriendo_crono_por_jugada = False
                     iniciar_crono_por_jugada()
                     
@@ -683,6 +847,25 @@ def juego_colores():
             corriendo_crono_por_jugada = False
 
         horas_por_jugada, minutos_por_jugada, segundos_por_jugada = 0, 0, 0
+    
+    def cerrar_ventana_juego():
+        global started
+        
+        started = False
+        try:
+            if corriendo_crono:
+                pausar_reset_crono()
+        except NameError:
+            pass
+        
+        try:
+            if corriendo_crono_por_jugada:
+                pausar_reset_crono_por_jugada()
+        except NameError:
+            pass
+        
+        ventana_principal.deiconify()
+        ventana_juego.destroy()
 
     # -------------------------------------------- Frames -------------------------------------------- #
 
@@ -722,16 +905,16 @@ def juego_colores():
     nivel_label.place(x=1300, y=15)
 
     opcion_del_momento_label = Label(ventana_juego, text=opcion_del_momento, bg=opcion_del_momento,
-                                     font=("Open Sans", 12), padx=5, pady=5)
+                                        font=("Open Sans", 12), padx=5, pady=5)
     opcion_del_momento_label.place(x=1300, y=700)
 
     mensaje_gano_partida = Label(ventana_juego, text="¡FELICIDADES, GANASTE!", font=("Open Sans", 14), bg="light green")
 
     mensaje_perdio_partida = Label(ventana_juego, text="¡UPS! No lo has conseguido en esta \n¡A la próxima!",
-                                   font=("Open Sans", 12), bg="#f25363")
+                                    font=("Open Sans", 12), bg="#f25363")
 
     mensaje_limite_tiempo = Label(ventana_juego, text="¡Oh oh!\n ¡Te has quedado sin tiempo!", font=("Open Sans", 12),
-                                  bg="#f25363")
+                                    bg="#f25363")
 
     entry_tiempo_limite = Entry(ventana_juego, font=("Open Sans", 13), borderwidth=0, justify="center", bg="pink", textvariable=tiempo_limite)
 
@@ -742,25 +925,31 @@ def juego_colores():
     global entrada_nombre_jugador, boton_start, save_button, load_button
 
     entrada_nombre_jugador = Entry(entry_jugador, textvariable=nombre_jugador, bg="light gray", borderwidth=0,
-                                   font=("Open Sans", 12))
+                                    font=("Open Sans", 12))
     entrada_nombre_jugador.grid(row=0, column=1)
 
     boton_start = Button(start_cancel_buttons, image=start_button, bg="white", borderwidth=0, pady=15, padx=30,
-                         command=lambda: start())
+                            command=lambda: start())
     boton_start.grid(row=0, column=0, pady=20)
 
     Button(start_cancel_buttons, image=cancel_button, bg="white", borderwidth=0, pady=15, padx=30,
-           command=cancel).grid(row=1, column=0, pady=20)
-
+            command=cancel).grid(row=1, column=0, pady=20)
+    
     save_button = Button(save_load_buttons, image=save_button_img, borderwidth=0, bg="white", padx=42, pady=15,
-                         command=lambda: save(matriz_tablero, matriz_tabla_calificar))
+                            command=lambda: save(matriz_tablero, matriz_tabla_calificar))
     save_button.grid(row=0, column=0, padx=10, pady=10)
 
     load_button = Button(save_load_buttons, image=load_button_img, borderwidth=0, bg="white", padx=40, pady=15,
-                         command=load)
+                            command=load)
     load_button.grid(row=1, column=0, padx=10, pady=10)
+    
+    Button(save_load_buttons, image=undo_button_img, borderwidth=0, padx=40, pady=15, 
+            command=deshacer_movimiento).grid(row=0, column=1, padx=10, pady=10)
+    
+    Button(save_load_buttons, image=redo_button_img, borderwidth=0, padx=40, pady=15,
+            command=rehacer_movimiento).grid(row=1, column=1, padx=10, pady=10)
 
-    Button(ventana_juego, image=back_button, borderwidth=0, command=ventana_juego.destroy).place(x=20, y=20)
+    Button(ventana_juego, image=back_button, borderwidth=0, command=cerrar_ventana_juego).place(x=20, y=20)
 
     # -------------------------------------------- Código -------------------------------------------- #
 
@@ -833,8 +1022,10 @@ def juego_letras_numeros():
     check_button = PhotoImage(file="CALIFICAR_recortado_(boton).png")
     save_button_img = PhotoImage(file="SAVE_recortado_(boton).png")
     load_button_img = PhotoImage(file="LOAD_recortado_(boton).png")
+    undo_button_img = PhotoImage(file="undo_recortado_(boton).png")
+    redo_button_img = PhotoImage(file="redo_recortado_(boton).png")
 
-    if seleccion_dificultad.get() == 1:
+    if seleccion_dificultad.get() == 1 or seleccion_dificultad.get() == 4:
         cantidad_filas = 8
         nivel = "Nivel: Fácil"
     elif seleccion_dificultad.get() == 2:
@@ -860,6 +1051,8 @@ def juego_letras_numeros():
         opciones = ["A", "B", "C", "D", "E", "F"]
     elif seleccion_panel.get() == 3:
         opciones = ["1", "2", "3", "4", "5", "6"]
+    elif seleccion_panel.get() == 4:
+        opciones = ["*", "+", "/", "-", ">", "<"]
 
     cantidad_columnas = 4
     matriz_tablero = []
@@ -881,6 +1074,7 @@ def juego_letras_numeros():
     def start():
         global started, opciones, boton_start, posicion_fila, secuencia_a_adivinar, negros, blancos, entrada_nombre_jugador
         global corriendo_crono, corriendo_crono_por_jugada, horas_por_jugada, minutos_por_jugada, segundos_por_jugada, tiempos_por_fila
+        global pila_deshacer_movimiento, pila_rehacer_movimiento
 
         if not started and 30 >= len(entrada_nombre_jugador.get()) >= 2:
             if seleccion_reloj.get() != 2:
@@ -907,6 +1101,8 @@ def juego_letras_numeros():
             negros = 0
             blancos = 0
             secuencia_a_adivinar = random.choices(opciones, k=4)
+            pila_deshacer_movimiento = []
+            pila_rehacer_movimiento = []
 
             boton_start.configure(image=check_button, command=lambda: cambiar_fila(posicion_fila))
             entrada_nombre_jugador.config(state="disabled")
@@ -919,7 +1115,7 @@ def juego_letras_numeros():
                 for y in range(cantidad_columnas):
                     matriz_tablero[x][y].configure(text="")
 
-            # habilita los cuadritos que están en la fila 0
+            # habilita los cuadritos que están en la fila -1
             for cuadro in matriz_tablero[posicion_fila]:
                 cuadro.bind("<Button-1>", lambda e, btn=cuadro: poner_opcion(btn))
 
@@ -974,9 +1170,13 @@ def juego_letras_numeros():
             print("Juego no ha sido iniciado")
 
     def poner_opcion(label):
+        global pila_deshacer_movimiento
+        
         if started:
             # da valor al label clickeado
             label.configure(text=opcion_seleccionada)
+            indice_label = (matriz_tablero[posicion_fila]).index(label)
+            pila_deshacer_movimiento.append((indice_label, opcion_seleccionada))
             print(label)
 
     def seleccionar_opcion(label):
@@ -988,17 +1188,89 @@ def juego_letras_numeros():
             opcion_del_momento = f"Opción seleccionada: {opcion_seleccionada}"
             opcion_del_momento_label.config(text=opcion_del_momento)
             print(label)
+    
+    def deshacer_movimiento():
+        global pila_deshacer_movimiento, pila_rehacer_movimiento
+        
+        if started and pila_deshacer_movimiento != []:
+            datos_ultimo_movimiento_deshacer = pila_deshacer_movimiento[-1]
+            # antes de hacer el pop el último elemento debe agreagarse a la pila rehacer
+            pila_rehacer_movimiento.append(datos_ultimo_movimiento_deshacer)
+            pila_deshacer_movimiento.pop()
+            # busca si había un valor en la casilla a quitar en la pila de deshacer movimientos
+            for dato_pila_deshacer in reversed(pila_deshacer_movimiento):
+                if dato_pila_deshacer[0] == datos_ultimo_movimiento_deshacer[0]:
+                    matriz_tablero[posicion_fila][dato_pila_deshacer[0]].config(text=dato_pila_deshacer[1])
+                    break                
+            else:
+                matriz_tablero[posicion_fila][datos_ultimo_movimiento_deshacer[0]].config(text="")
+    
+    def rehacer_movimiento():
+        global pila_deshacer_movimiento, pila_rehacer_movimiento
+        
+        if started and pila_rehacer_movimiento != []:
+            datos_ultimo_movimiento_rehacer = pila_rehacer_movimiento[-1]
+            matriz_tablero[posicion_fila][datos_ultimo_movimiento_rehacer[0]].config(text=datos_ultimo_movimiento_rehacer[1])
+            pila_deshacer_movimiento.append(datos_ultimo_movimiento_rehacer)
+            pila_rehacer_movimiento.pop()
+    
+    def reiniciar_tablero_multinivel():
+        global cantidad_filas, matriz_tablero, matriz_tabla_calificar, nivel
+        
+        cantidad_filas -= 1
+        
+        if cantidad_filas == 7:
+            nivel = "Nivel: Medio"
+        elif cantidad_filas == 6:
+            nivel = "Nivel: Difícil"
+        
+        nivel_label.config(text=nivel)
+
+        # quta los labels del tablero y tabla califica
+        for fila_label in matriz_tablero:
+                for label in fila_label:
+                    label.grid_forget()
+                    
+        for fila_label_califica in matriz_tabla_calificar:
+            for label_califica in fila_label_califica:
+                label_califica.grid_forget()
+        
+        matriz_tablero = []
+        matriz_tabla_calificar = []
+        
+        # crea la nueva tabla con la cantidad de filas correspondientes
+        for i in range(cantidad_filas):
+            fila_tablero = []
+
+            for j in range(cantidad_columnas):
+                label_tablero = Label(tablero, text="", width=5, height=2)
+                label_tablero.grid(row=i, column=j, padx=10, pady=30)
+                fila_tablero.append(label_tablero)
+
+            matriz_tablero.append(fila_tablero)
+
+        # for para crear la tabla de calificación nueva con la partida guardada
+        for i in range(cantidad_filas):
+            fila_calificadora = []
+
+            for j in range(4):
+                label_calificar = Label(tabla_calificadora, text="", bg="orange", width=1)
+                label_calificar.grid(row=i, column=j, padx=5, pady=37)
+                fila_calificadora.append(label_calificar)
+
+            matriz_tabla_calificar.append(fila_calificadora)
 
     def cambiar_fila(row):
         global posicion_fila, started, secuencia_a_adivinar, negros, blancos, tiempo_partida
         global horas, minutos, segundos, horas_por_jugada, minutos_por_jugada, segundos_por_jugada
         global jugadas_nivel_facil, jugadas_nivel_medio, jugadas_nivel_dificil
+        global pila_deshacer_movimiento, pila_rehacer_movimiento, corriendo_crono_por_jugada, tiempos_por_fila
 
         negros = 0
         blancos = 0
         i_cuadrito_blanco = 0
-
-
+        pila_deshacer_movimiento = []
+        pila_rehacer_movimiento = []
 
         # valida de que todos los cuadritos tengan un valor y no estén vacíos
         for elemento in matriz_tablero[row]:
@@ -1038,49 +1310,121 @@ def juego_letras_numeros():
         print(f"Cuadritos blancos: {blancos}")
 
         if negros == 4:
-            boton_start.configure(image=start_button, command=start)
-            entrada_nombre_jugador.config(state="normal")
-            entry_tiempo_limite.config(state="normal")
-            started = False
-            mensaje_gano_partida.place(x=posicion_botones_izquierda + 40, y=650)
+            # en caso de ser multinivel y nivel fácil o medio entra al condicional
+            if seleccion_dificultad.get() == 4 and 6 < cantidad_filas <= 8:
+                if seleccion_reloj.get() != 2:
+                    # toma el tiempo que tardó en terminar la partida
+                    tiempo_partida = crono_label["text"]
+                    print(f"Tiempo en terminar la partida: {tiempo_partida}")
 
-            if seleccion_reloj.get() != 2:
-                # toma el tiempo que tardó en terminar la partida
-                tiempo_partida = crono_label["text"]
-                print(f"Tiempo en terminar la partida: {tiempo_partida}")
+                    if seleccion_reloj.get() == 1:
+                        fecha_hora = datetime.now()
 
-            if seleccion_reloj.get() == 1:
-                fecha_hora = datetime.now()
+                        if cantidad_filas == 8:
+                            jugadas_nivel_facil.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
+                        elif cantidad_filas == 7:
+                            jugadas_nivel_medio.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
+                        else:
+                            jugadas_nivel_dificil.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
 
-                if nivel == "Nivel: Fácil":
-                    jugadas_nivel_facil.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
-                elif nivel == "Nivel: Medio":
-                    jugadas_nivel_medio.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
-                else:
-                    jugadas_nivel_dificil.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
+                        # ordena las listas de manera descendente
+                        jugadas_nivel_facil = sorted(jugadas_nivel_facil, key=lambda datos: datos[1])
+                        jugadas_nivel_medio = sorted(jugadas_nivel_medio, key=lambda datos: datos[1])
+                        jugadas_nivel_dificil = sorted(jugadas_nivel_dificil, key=lambda datos: datos[1])
+                        
+                        # de la lista toma solo los 10 primeros
+                        jugadas_nivel_facil = jugadas_nivel_facil[:10]
+                        jugadas_nivel_medio = jugadas_nivel_medio[:10]
+                        jugadas_nivel_dificil = jugadas_nivel_dificil[:10]
 
-                # ordena las listas de manera descendente
-                jugadas_nivel_facil = sorted(jugadas_nivel_facil, key=lambda datos: datos[1])
-                jugadas_nivel_medio = sorted(jugadas_nivel_medio, key=lambda datos: datos[1])
-                jugadas_nivel_dificil = sorted(jugadas_nivel_dificil, key=lambda datos: datos[1])
+                        top_10["Facil"] = jugadas_nivel_facil
+                        top_10["Medio"] = jugadas_nivel_medio
+                        top_10["Dificil"] = jugadas_nivel_dificil
+
+                        archivo_top10 = open("mastermind2022top10.dat", "wb")
+                        pickle.dump(top_10, archivo_top10)
+                        archivo_top10.close()                
+                    
+                    if seleccion_reloj.get() in [3, 4]:
+                        started = False
+                        negros = 0
+                        blancos = 0
+                        boton_start.config(image=start_button, command=start)
+                        entry_tiempo_limite.config(state="normal")
+                        
+                    
+                    tiempos_por_fila = []
+                    corriendo_crono_por_jugada = False
+                    # si es por tiempo limite solo se pausa el cronómetro y este inicia al momento de clickear start
+                    if seleccion_reloj.get() in [3, 4]:
+                        pausar_reset_crono()
+                    else:
+                        pausar_reset_crono()
+                        iniciar_crono()
+                    reiniciar_tablero_multinivel()
                 
-                # de la lista toma solo los 10 primeros
-                jugadas_nivel_facil = jugadas_nivel_facil[:10]
-                jugadas_nivel_medio = jugadas_nivel_medio[:10]
-                jugadas_nivel_dificil = jugadas_nivel_dificil[:10]
+                if seleccion_reloj.get() not in [3, 4]:
+                    secuencia_a_adivinar = random.choices(opciones, k=4)
+                    print(f"Secuencia a adivinar: {secuencia_a_adivinar}")
+                
+                negros = 0
+                blancos = 0
+                posicion_fila = -1
+                
+                # deshabilita los cuadritos del tablero
+                for fila in matriz_tablero:
+                    for cuadro in fila:
+                        cuadro.unbind("<Button-1>")
 
-                top_10["Facil"] = jugadas_nivel_facil
-                top_10["Medio"] = jugadas_nivel_medio
-                top_10["Dificil"] = jugadas_nivel_dificil
+                # habilita los cuadritos que están en la fila -1
+                for cuadro in matriz_tablero[posicion_fila]:
+                    cuadro.bind("<Button-1>", lambda e, btn=cuadro: poner_opcion(btn))
+                
+                return
+            else:
+                boton_start.configure(image=start_button, command=start)
+                entrada_nombre_jugador.config(state="normal")
+                entry_tiempo_limite.config(state="normal")
+                started = False
+                mensaje_gano_partida.place(x=posicion_botones_izquierda + 40, y=650)
 
-                archivo_top10 = open("mastermind2022top10.dat", "wb")
-                pickle.dump(top_10, archivo_top10)
-                archivo_top10.close()
+                if seleccion_reloj.get() != 2:
+                    # toma el tiempo que tardó en terminar la partida
+                    tiempo_partida = crono_label["text"]
+                    print(f"Tiempo en terminar la partida: {tiempo_partida}")
 
-            pausar_reset_crono()
-            print("¡HAS GANADO!")
+                if seleccion_reloj.get() == 1:
+                    fecha_hora = datetime.now()
 
-            return
+                    if nivel == "Nivel: Fácil":
+                        jugadas_nivel_facil.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
+                    elif nivel == "Nivel: Medio":
+                        jugadas_nivel_medio.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
+                    else:
+                        jugadas_nivel_dificil.append([entrada_nombre_jugador.get(), tiempo_partida, secuencia_a_adivinar, fecha_hora.date(), fecha_hora.time(), tiempos_por_fila])
+
+                    # ordena las listas de manera descendente
+                    jugadas_nivel_facil = sorted(jugadas_nivel_facil, key=lambda datos: datos[1])
+                    jugadas_nivel_medio = sorted(jugadas_nivel_medio, key=lambda datos: datos[1])
+                    jugadas_nivel_dificil = sorted(jugadas_nivel_dificil, key=lambda datos: datos[1])
+                    
+                    # de la lista toma solo los 10 primeros
+                    jugadas_nivel_facil = jugadas_nivel_facil[:10]
+                    jugadas_nivel_medio = jugadas_nivel_medio[:10]
+                    jugadas_nivel_dificil = jugadas_nivel_dificil[:10]
+
+                    top_10["Facil"] = jugadas_nivel_facil
+                    top_10["Medio"] = jugadas_nivel_medio
+                    top_10["Dificil"] = jugadas_nivel_dificil
+
+                    archivo_top10 = open("mastermind2022top10.dat", "wb")
+                    pickle.dump(top_10, archivo_top10)
+                    archivo_top10.close()
+
+                pausar_reset_crono()
+                print("¡HAS GANADO!")
+
+                return
 
         posicion_fila -= 1
 
@@ -1129,31 +1473,33 @@ def juego_letras_numeros():
                 datos_color_calificacion.append(fila_calificacion)
 
             archivo_partida = open("mastermind2022juegoactual.dat", "wb")
-            pickle.dump(datos_cuadrito_tablero, archivo_partida)
-            pickle.dump(posicion_fila, archivo_partida)
-            pickle.dump(secuencia_a_adivinar, archivo_partida)
-            pickle.dump(entrada_nombre_jugador.get(), archivo_partida)
-            pickle.dump(datos_color_calificacion, archivo_partida)
-            pickle.dump(nivel, archivo_partida)
-            pickle.dump(opciones, archivo_partida)
-            pickle.dump(cantidad_filas, archivo_partida)
-            pickle.dump(posicion_botones_izquierda, archivo_partida)
-            pickle.dump(posicion_panel_eje_x, archivo_partida)
-            pickle.dump(seleccion_reloj.get(), archivo_partida)
+            pickle.dump(datos_cuadrito_tablero, archivo_partida) # [0]
+            pickle.dump(posicion_fila, archivo_partida) # [1]
+            pickle.dump(secuencia_a_adivinar, archivo_partida) # [2]
+            pickle.dump(entrada_nombre_jugador.get(), archivo_partida) # [3]
+            pickle.dump(datos_color_calificacion, archivo_partida) # [4]
+            pickle.dump(nivel, archivo_partida) # [5]
+            pickle.dump(opciones, archivo_partida) # [6]
+            pickle.dump(cantidad_filas, archivo_partida) # [7]
+            pickle.dump(posicion_botones_izquierda, archivo_partida) # [8]
+            pickle.dump(posicion_panel_eje_x, archivo_partida) # [9]
+            pickle.dump(seleccion_reloj.get(), archivo_partida) # [10]
+            pickle.dump(pila_deshacer_movimiento, archivo_partida) # [11]
+            pickle.dump(pila_rehacer_movimiento, archivo_partida) # [12]
 
             if seleccion_reloj.get() != 2:
-                pickle.dump(horas, archivo_partida)
-                pickle.dump(minutos, archivo_partida)
-                pickle.dump(segundos, archivo_partida)
+                pickle.dump(horas, archivo_partida) # [13]
+                pickle.dump(minutos, archivo_partida) # [14]
+                pickle.dump(segundos, archivo_partida) # [15]
 
                 if seleccion_reloj.get() == 1:
-                    pickle.dump(horas_por_jugada, archivo_partida)
-                    pickle.dump(minutos_por_jugada, archivo_partida)
-                    pickle.dump(segundos_por_jugada, archivo_partida)
-                    pickle.dump(tiempos_por_fila, archivo_partida)
+                    pickle.dump(horas_por_jugada, archivo_partida) # [16]
+                    pickle.dump(minutos_por_jugada, archivo_partida) # [17]
+                    pickle.dump(segundos_por_jugada, archivo_partida) # [18]
+                    pickle.dump(tiempos_por_fila, archivo_partida) # [19]
 
                 if seleccion_reloj.get() in [3, 4]:
-                    pickle.dump(entry_tiempo_limite.get(), archivo_partida)
+                    pickle.dump(entry_tiempo_limite.get(), archivo_partida) # [16]
 
             archivo_partida.close()
 
@@ -1162,6 +1508,7 @@ def juego_letras_numeros():
             fila_calificadora, cantidad_filas, label_calificar, label_tablero, fila_tablero, matriz_tablero, matriz_tabla_calificar, posicion_botones_izquierda, posicion_panel_eje_x, \
             seleccion_reloj
         global horas, minutos, segundos, corriendo_crono, tiempos_por_fila, corriendo_crono_por_jugada, horas_por_jugada, minutos_por_jugada, segundos_por_jugada
+        global pila_deshacer_movimiento, pila_rehacer_movimiento
 
         if not started:
             # elimina los labels de la tabla anterior, de la tabla y de la tabla de calificacion
@@ -1192,9 +1539,11 @@ def juego_letras_numeros():
             posicion_botones_izquierda = partida_guardada[8]
             posicion_panel_eje_x = partida_guardada[9]
             seleccion_reloj.set(partida_guardada[10])
+            pila_deshacer_movimiento = partida_guardada[11]
+            pila_rehacer_movimiento = partida_guardada[12]
             
             if seleccion_reloj.get() in [3,4]:
-                tiempo_limite.set(partida_guardada[14])
+                tiempo_limite.set(partida_guardada[16])
                 
             archivo_partida.close()
 
@@ -1205,6 +1554,9 @@ def juego_letras_numeros():
             opcion_del_momento_label.config(text=opcion_del_momento)
             entrada_nombre_jugador.config(state="disabled")
             entry_tiempo_limite.config(state="disabled")
+            mensaje_gano_partida.place_forget()
+            mensaje_perdio_partida.place_forget()
+            mensaje_limite_tiempo.place_forget()
 
             # resetea el label del nivel
             nivel_label.config(text=nivel)
@@ -1266,7 +1618,7 @@ def juego_letras_numeros():
             started = True
 
             if seleccion_reloj.get() != 2:
-                horas, minutos, segundos = partida_guardada[11], partida_guardada[12], partida_guardada[13]
+                horas, minutos, segundos = partida_guardada[13], partida_guardada[14], partida_guardada[15]
                 corriendo_crono = False
                 crono_label.place(x=posicion_botones_izquierda + 90, y=600)
                 iniciar_crono()
@@ -1277,10 +1629,10 @@ def juego_letras_numeros():
                 entry_tiempo_limite.place_forget()
                 
                 if seleccion_reloj.get() == 1:
-                    horas_por_jugada = partida_guardada[14]
-                    minutos_por_jugada = partida_guardada[15]
-                    segundos_por_jugada = partida_guardada[16]
-                    tiempos_por_fila = partida_guardada[17]
+                    horas_por_jugada = partida_guardada[16]
+                    minutos_por_jugada = partida_guardada[17]
+                    segundos_por_jugada = partida_guardada[18]
+                    tiempos_por_fila = partida_guardada[19]
                     corriendo_crono_por_jugada = False
                     iniciar_crono_por_jugada()
                     
@@ -1402,6 +1754,22 @@ def juego_letras_numeros():
             corriendo_crono_por_jugada = False
 
         horas_por_jugada, minutos_por_jugada, segundos_por_jugada = 0, 0, 0
+    
+    def cerrar_ventana_juego():
+        try:
+            if corriendo_crono:
+                pausar_reset_crono()
+        except NameError:
+            pass
+        
+        try:
+            if corriendo_crono_por_jugada:
+                pausar_reset_crono_por_jugada()
+        except NameError:
+            pass
+        
+        ventana_principal.deiconify()
+        ventana_juego.destroy()
 
     # -------------------------------------------- Frames -------------------------------------------- #
 
@@ -1442,45 +1810,51 @@ def juego_letras_numeros():
     nivel_label.place(x=1300, y=15)
 
     opcion_del_momento_label = Label(ventana_juego, text=opcion_del_momento, bg="#ec518f", font=("Open Sans", 12),
-                                     padx=5, pady=5)
+                                        padx=5, pady=5)
     opcion_del_momento_label.place(x=1300, y=700)
 
     mensaje_gano_partida = Label(ventana_juego, text="¡FELICIDADES, GANASTE!", font=("Open Sans", 14), bg="light green")
 
     mensaje_perdio_partida = Label(ventana_juego, text="¡UPS! No lo has conseguido en esta \n¡A la próxima!",
-                                   font=("Open Sans", 12), bg="#f25363")
+                                    font=("Open Sans", 12), bg="#f25363")
 
     mensaje_limite_tiempo = Label(ventana_juego, text="¡Oh oh!\n ¡Te has quedado sin tiempo!", font=("Open Sans", 12),
-                                  bg="#f25363")
+                                    bg="#f25363")
 
     entry_tiempo_limite = Entry(ventana_juego, font=("Open Sans", 13), borderwidth=0, justify="center", bg="pink", textvariable=tiempo_limite)
 
-    crono_label = Label(ventana_juego, bg="white", text="00:00:00", font=("Open Sans", 20))  ##################################################
+    crono_label = Label(ventana_juego, bg="white", text="00:00:00", font=("Open Sans", 20))
 
     # -------------------------------------------- Buttons -------------------------------------------- #
 
     global entrada_nombre_jugador, boton_start, save_button, load_button
 
     entrada_nombre_jugador = Entry(entry_jugador, textvariable=nombre_jugador, bg="light gray", borderwidth=0,
-                                   font=("Open Sans", 12))
+                                    font=("Open Sans", 12))
     entrada_nombre_jugador.grid(row=0, column=1)
 
     boton_start = Button(start_cancel_buttons, image=start_button, bg="white", borderwidth=0, pady=15, padx=30,
-                         command=lambda: start())
+                            command=lambda: start())
     boton_start.grid(row=0, column=0, pady=20)
 
     Button(start_cancel_buttons, image=cancel_button, bg="white", borderwidth=0, pady=15, padx=30,
-           command=cancel).grid(row=1, column=0, pady=20)
+            command=cancel).grid(row=1, column=0, pady=20)
 
     save_button = Button(save_load_buttons, image=save_button_img, borderwidth=0, bg="white", padx=42, pady=15,
-                         command=lambda: save(matriz_tablero, matriz_tabla_calificar))
+                            command=lambda: save(matriz_tablero, matriz_tabla_calificar))
     save_button.grid(row=0, column=0, padx=10, pady=10)
 
     load_button = Button(save_load_buttons, image=load_button_img, borderwidth=0, bg="white", padx=40, pady=15,
-                         command=load)
+                            command=load)
     load_button.grid(row=1, column=0, padx=10, pady=10)
+    
+    Button(save_load_buttons, image=undo_button_img, borderwidth=0, padx=40, pady=15, 
+            command=deshacer_movimiento).grid(row=0, column=1, padx=10, pady=10)
+    
+    Button(save_load_buttons, image=redo_button_img, borderwidth=0, padx=40, pady=15,
+            command=rehacer_movimiento).grid(row=1, column=1, padx=10, pady=10)
 
-    Button(ventana_juego, image=back_button, borderwidth=0, command=ventana_juego.destroy).place(x=20, y=20)
+    Button(ventana_juego, image=back_button, borderwidth=0, command=cerrar_ventana_juego).place(x=20, y=20)
 
     # -------------------------------------------- Código -------------------------------------------- #
 
@@ -1534,12 +1908,14 @@ def juego_letras_numeros():
 
 def juego():
     if seleccion_panel.get() == 1:
+        ventana_principal.withdraw()
         juego_colores()
     else:
+        ventana_principal.withdraw()
         juego_letras_numeros()
 
-
 def top10_resumen():
+    ventana_principal.withdraw()
     ventana_top10_resumen = Toplevel()
     ventana_top10_resumen.title("Mastermind")
     ventana_top10_resumen.geometry("1466x768")
@@ -1600,6 +1976,11 @@ def top10_resumen():
             pdf_top10_resumen_dificil.output("Top_10_resumen_nivel_Dificil.pdf")
             subprocess.Popen("Top_10_resumen_nivel_Dificil.pdf", shell=True)
         
+        ventana_principal.deiconify()
+        ventana_top10_resumen.destroy()
+    
+    def cerrar_ventana_top():
+        ventana_principal.deiconify()
         ventana_top10_resumen.destroy()
         
     # -------------------------------------------- Labels -------------------------------------------- #
@@ -1616,10 +1997,11 @@ def top10_resumen():
     
     Button(ventana_top10_resumen, image=open_summary_button, borderwidth=0, command=crea_top10_resumen).place(x=650, y=400)
     
-    Button(ventana_top10_resumen, image=back_button, borderwidth=0, command=ventana_top10_resumen.destroy).place(x=20, y=20)
+    Button(ventana_top10_resumen, image=back_button, borderwidth=0, command=cerrar_ventana_top).place(x=20, y=20)
     
     
 def top10_detalle():
+    ventana_principal.withdraw()
     ventana_top10_detalle = Toplevel()
     ventana_top10_detalle.title("Mastermind")
     ventana_top10_detalle.geometry("1466x768")
@@ -1715,6 +2097,11 @@ def top10_detalle():
             pdf_top10_detalle_dificil.output("Top_10_detalle_nivel_Dificil.pdf")
             subprocess.Popen("Top_10_detalle_nivel_Dificil.pdf", shell=True)
         
+        ventana_principal.deiconify()
+        ventana_top10_detalle.destroy()
+    
+    def cerrar_ventana_top():
+        ventana_principal.deiconify()
         ventana_top10_detalle.destroy()
         
     # -------------------------------------------- Labels -------------------------------------------- #
@@ -1731,7 +2118,7 @@ def top10_detalle():
     
     Button(ventana_top10_detalle, image=open_details_button, borderwidth=0, command=crea_top10_detalle).place(x=650, y=400)
     
-    Button(ventana_top10_detalle, image=back_button, borderwidth=0, command=ventana_top10_detalle.destroy).place(x=20, y=20)
+    Button(ventana_top10_detalle, image=back_button, borderwidth=0, command=cerrar_ventana_top).place(x=20, y=20)
     
     
 def help_function():
@@ -1782,7 +2169,7 @@ Button(ventana_principal, image=help_button, borderwidth=0, command=help_functio
 
 Button(ventana_principal, image=about_button, borderwidth=0, command=about_function).pack(pady=20)
 
-Button(ventana_principal, image=quit_button, borderwidth=0, command=ventana_principal.quit).pack()
+Button(ventana_principal, image=quit_button, borderwidth=0, command=ventana_principal.destroy).pack()
 
 # -------------------------------------------- Código -------------------------------------------- #
 
